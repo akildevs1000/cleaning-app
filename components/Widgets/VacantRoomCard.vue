@@ -8,7 +8,8 @@
             elevation="0"
             dark
             class="pa-2 mx-auto"
-            :style="`background-color:${bgColor};color:${color};`"
+            :style="getRelatedStyle(item)"
+            @click="$emit(`selectedRoom`, item)"
           >
             <span>{{
               item.room_no.length < 5
@@ -19,7 +20,7 @@
         </div>
       </v-col>
     </v-row>
-    <v-row no-gutters v-else>
+    <!-- <v-row no-gutters v-else>
       <v-col cols="12">
         <div
           style="
@@ -34,12 +35,20 @@
           No Room
         </div>
       </v-col>
-    </v-row>
+    </v-row> -->
   </span>
 </template>
 
 <script>
 export default {
-  props: ["items","bgColor", "color"],
+  props: ["items", "bgColor", "color"],
+  methods: {
+    getRelatedStyle(item) {
+      if (item.is_cleaned) {
+        return `background-color:#2ce860;color:white;`;
+      }
+      return `background-color:${this.bgColor};color:${this.color};`;
+    },
+  },
 };
 </script>

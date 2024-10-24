@@ -30,7 +30,13 @@
         <v-col class="text-center" cols="4">
           <img src="/login/login-logo.png" style="width: 100%" />
           <br />
-          <span class="text-color">{{ $auth?.user?.company?.name }}</span>
+          <span class="text-color">
+            {{
+              $auth?.user?.company?.name < 10
+                ? $auth?.user?.company?.name
+                : $auth?.user?.company?.name.slice(0, 1) + " & Co"
+            }}
+          </span>
         </v-col>
 
         <!-- Right side with avatar -->
@@ -190,7 +196,7 @@ export default {
           topMenu: "dashboard",
           icon: "mdi-calendar",
           title: "Calendar",
-          to: "/hotel/calendar1",
+          to: "/",
           menu: "calendar_access",
         },
         {

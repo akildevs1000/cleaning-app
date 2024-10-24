@@ -13,11 +13,13 @@
       .progress-green {
         background-color: #8bc34a;
         color: white;
+        transition: width 0.5s ease-in-out; /* Add smooth transition */
       }
 
       .progress-gray {
         background-color: #d3d3d3;
         color: black;
+        transition: width 0.5s ease-in-out; /* Add smooth transition */
       }
     </style>
 

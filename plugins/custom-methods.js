@@ -91,6 +91,26 @@ export default ({ app }, inject) => {
       console.log(element);
       element.click();
     },
+    calculateTotalTime(startTime, endTime) {
+      const start = new Date(`1970-01-01T${startTime}Z`);
+      const end = new Date(`1970-01-01T${endTime}Z`);
+
+      // If end time is midnight (00:00:00), it represents the next day
+      if (endTime === "00:00:00") {
+        end.setDate(end.getDate() + 1); // Move end time to the next day
+      }
+
+      // Calculate the difference in milliseconds
+      const diffMs = end - start;
+
+      // Convert milliseconds to hours, minutes, and seconds
+      const totalSeconds = Math.floor(diffMs / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
   });
 
   inject("dateFormat", {

@@ -268,7 +268,7 @@ export default {
               LoginUser.enable_whatsapp_otp == 1
             ) {
               this.set_otp_new(this.$auth.user.id);
-              this.$router.push(`/otp`);
+              this.$router.push(`/`);
               return;
             } else if (data.user.user_type != "master") {
               const updatedUser = Object.assign({}, this.$auth.user, {
@@ -290,7 +290,7 @@ export default {
 
             if (LoginUser.employee_role_id > 0) {
               this.set_otp(this.$auth.user.id);
-              this.$router.push(`/otp`);
+              this.$router.push(`/`);
               return;
             }
           })
