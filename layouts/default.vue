@@ -396,28 +396,8 @@ export default {
 
   created() {
     this.title = "MyHotel2Cloud"; // this.$auth.user?.company?.company_code;
-    setTimeout(() => {
-      this.loadNotificationMenu();
-    }, 1000 * 60);
-    setInterval(() => {
-      this.loadNotificationMenu();
-    }, 1000 * 60 * 5);
-    let user = this.$auth.user;
-    let permissions = user.permissions;
-
-    this.menus.forEach((ele) => {
-      if (
-        permissions.includes(ele.menu) ||
-        this.$auth.user.user_type == "company"
-      ) {
-        this.items.push(ele);
-      }
-    });
-
-    this.getCompanyDetails();
-
-    this.filteredMenu = this.items;
-    this.$router.push(this.filteredMenu[0].to ?? "/");
+ 
+    this.$router.push("/");
 
     this.setActive({
       label: "Dashboard",
