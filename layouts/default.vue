@@ -8,6 +8,12 @@
       .text-color {
         color: #8a8a8a;
       }
+      .border-top {
+        border-top: 1px solid #e0e0e0;
+      }
+      .border-bottom {
+        border-bottom: 1px solid #e0e0e0;
+      }
     </style>
     <v-app-bar fixed app dense flat>
       <v-row align="center" no-gutters>

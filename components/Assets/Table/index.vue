@@ -7,7 +7,7 @@
             v-for="(col, index) in headers"
             :key="index"
             class="primary--text py-1 px-2 border-top border-bottom"
-            :class="`text-${col.align}`"
+            :class="`text-${col.align || 'left'}`"
           >
             {{ col.text }}
           </td>
