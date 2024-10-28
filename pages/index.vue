@@ -69,7 +69,7 @@
           <v-row>
             <v-col cols="4">
               <div style="display: flex">
-                <v-avatar size="20">
+                <v-avatar size="50">
                   <v-img src="/cleaner.png"></v-img>
                 </v-avatar>
                 <div
@@ -83,10 +83,10 @@
               </div>
             </v-col>
             <v-col cols="8" class="text-right">
-              <v-icon color="green" @click="setStatus(`Cleaned`)"
+              <v-icon large color="green" @click="setStatus(`Cleaned`)"
                 >mdi-emoticon-happy-outline</v-icon
               >
-              <v-icon color="red" @click="setStatus(`Dirty`)"
+              <v-icon large color="red" @click="setStatus(`Dirty`)"
                 >mdi-emoticon-sad-outline</v-icon
               >
             </v-col>
@@ -95,13 +95,13 @@
           <v-row>
             <v-col cols="2">
               <div style="display: flex">
-                <v-icon>mdi-clock-outline</v-icon>
+                <v-icon large>mdi-clock-outline</v-icon>
                 <div
-                  class="ml-2"
+                  class="ml-2 mt-2"
                   style="display: inline-block; line-height: 1.1"
                 >
-                  <small>{{ FormData?.start_time }}</small>
-                  <small>{{ FormData?.end_time }}</small>
+                  <div>{{ FormData?.start_time }}</div>
+                  <div>{{ FormData?.end_time }}</div>
                 </div>
               </div>
             </v-col>

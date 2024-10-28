@@ -6,7 +6,7 @@
       style="display: none"
       @change="handleFileInputChange"
     />
-    <v-icon color="red" v-if="isFileSelect" x-small @click="clearImage"
+    <v-icon color="red" v-if="isFileSelect" @click="clearImage"
       >mdi-close</v-icon
     >
     <span v-if="isFileSelect">
@@ -18,7 +18,7 @@
         :src="preview"
       />
     </span>
-    <v-icon v-else small @click="triggerFileInput" :color="color"
+    <v-icon v-else @click="triggerFileInput" :color="color"
       >mdi-camera-outline</v-icon
     >
   </span>

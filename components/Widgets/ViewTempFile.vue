@@ -3,7 +3,7 @@
     <AssetsIconClose left="290" @click="dialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"
-        ><v-icon small color="purple">mdi-eye-outline</v-icon></span
+        ><v-icon color="purple">mdi-eye-outline</v-icon></span
       >
     </template>
 
