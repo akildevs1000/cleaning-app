@@ -9,7 +9,8 @@
             dark
             class="pa-2 mx-auto"
             :style="getRelatedStyle(item)"
-            @click="$emit(`selectedRoom`, item)"
+            :class="selectedIndex === index ? 'blue white--text' : ''"
+            @click="selectRoom(index, item)"
           >
             <span>{{
               item.room_no.length < 5
@@ -20,34 +21,26 @@
         </div>
       </v-col>
     </v-row>
-    <!-- <v-row no-gutters v-else>
-      <v-col cols="12">
-        <div
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #d3d3d3;
-            border-radius: 3px;
-            min-height: 200px;
-          "
-        >
-          No Room
-        </div>
-      </v-col>
-    </v-row> -->
   </span>
 </template>
 
 <script>
 export default {
   props: ["items", "bgColor", "color"],
+  data() {
+    return {
+      selectedIndex: null, // State to keep track of the selected index
+    };
+  },
   methods: {
     getRelatedStyle(item) {
-      if (item.is_cleaned) {
-        return `background-color:#2ce860;color:white;`;
-      }
-      return `background-color:${this.bgColor};color:${this.color};`;
+      return item.is_cleaned
+        ? `background-color:#2ce860;color:white;`
+        : `background-color:${this.bgColor};color:${this.color};`;
+    },
+    selectRoom(index, item) {
+      this.selectedIndex = index; // Set the selected index
+      this.$emit("selectedRoom", item); // Emit the event
     },
   },
 };

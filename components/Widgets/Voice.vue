@@ -24,12 +24,12 @@
        {
       }
     </style>
-    <v-icon  @click="startRecording" color="primary" v-if="!isRecording"
+    <v-icon large @click="startRecording" color="primary" v-if="!isRecording"
       >mdi-microphone-outline</v-icon
     >
 
     <v-icon
-      
+      large
       :class="`${isRecording ? 'recording-active' : ''}`"
       @click="stopRecording"
       color="primary"
