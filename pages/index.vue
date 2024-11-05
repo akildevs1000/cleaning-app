@@ -342,7 +342,7 @@ export default {
           filter_date: this.filterDate,
         },
       };
-      this.$axios.get(`room_list_grid`, payload).then(async ({ data }) => {
+      this.$axios.get(`room_list_grid_for_house_keeping`, payload).then(async ({ data }) => {
         if (!data.status) {
           this.alert("Failure!", data.data, "error");
           return false;
