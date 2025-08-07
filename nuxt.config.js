@@ -115,7 +115,7 @@ export default {
       local: {
         endpoints: {
           login: {
-            url: "login",
+            url: "house-keeping/login",
             method: "post",
             propertyName: "token",
           },
