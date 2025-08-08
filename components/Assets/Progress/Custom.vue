@@ -3,35 +3,31 @@
     <style>
       .progress-container {
         width: 100%;
-        background-color: #d8d8d8;
+        background-color: #d3d3d3; /* Remaining part color */
+        border-radius: 50px;
+        overflow: hidden;
+        height: 25px;
         display: flex;
-        justify-content: center;
-        text-align: center;
-        overflow: hidden; /* To handle overflow when adding more style */
+        align-items: center;
       }
 
-      .progress-green {
-        background-color: #8bc34a;
+      .progress-bar {
+        background-color: #2c3e50; /* Engaged color */
+        height: 100%;
         color: white;
-        transition: width 0.5s ease-in-out; /* Add smooth transition */
-      }
-
-      .progress-gray {
-        background-color: #d3d3d3;
-        color: black;
-        transition: width 0.5s ease-in-out; /* Add smooth transition */
+        text-align: center;
+        line-height: 25px;
+        transition: width 0.5s ease-in-out;
+        white-space: nowrap;
       }
     </style>
 
-    <div
-      class="progress-container"
-      aria-label="Progress bar showing engaged vs remaining"
-    >
-      <div class="progress-green" :style="{ width: `${engagedPercentage}%` }">
-        {{ engaged }}
-      </div>
-      <div class="progress-gray" :style="{ width: `${remainingPercentage}%` }">
-        {{ total - engaged }}
+    <div class="progress-container" aria-label="Progress bar showing engaged vs remaining">
+      <div
+        class="progress-bar"
+        :style="{ width: engagedPercentage + '%' }"
+      >
+        {{ engaged }} / {{ total }}
       </div>
     </div>
   </span>
@@ -51,11 +47,8 @@ export default {
   },
   computed: {
     engagedPercentage() {
-      return this.total ? ((this.engaged / this.total) * 100).toFixed(2) : 100;
-    },
-    remainingPercentage() {
       return this.total
-        ? (((this.total - this.engaged) / this.total) * 100).toFixed(2)
+        ? ((this.engaged / this.total) * 100).toFixed(2)
         : 0;
     },
   },

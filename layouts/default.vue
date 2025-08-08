@@ -16,7 +16,7 @@
       }
     </style>
     <v-app-bar fixed app dense flat>
-      <v-row align="center" no-gutters>
+      <v-row align="center" >
         <!-- Left side with location and date -->
         <v-col class="text-left" cols="4">
           <v-row no-gutters>
@@ -35,14 +35,14 @@
         <!-- Center title -->
         <v-col class="text-center" cols="4">
           <img src="/login/login-logo.png" style="width: 100%" />
-          <br />
+          <!-- <br />
           <span class="text-color">
             {{
               $auth?.user?.company?.name < 10
                 ? $auth?.user?.company?.name
                 : $auth?.user?.company?.name.slice(0, 1) + " & Co"
             }}
-          </span>
+          </span> -->
         </v-col>
 
         <!-- Right side with avatar -->
@@ -112,19 +112,18 @@
         <v-col cols="12" class="mb-1">
           <v-divider></v-divider>
         </v-col>
-        <!-- Left side with location and date -->
         <v-col class="text-center">
-          <v-icon color="#968f9f">mdi-home</v-icon>
+          <v-icon color="#968f9f" @click="goto(`/`)">mdi-home</v-icon>
         </v-col>
         <v-col class="text-center">
-          <v-icon color="#b8afaa" to="/cleaning">mdi-bed</v-icon>
+          <v-icon color="#b8afaa" @click="goto(`/rooms`)">mdi-bed</v-icon>
         </v-col>
-        <v-col class="text-center">
+        <!-- <v-col class="text-center">
           <v-icon color="#cfbeb4">mdi-cash-multiple</v-icon>
         </v-col>
         <v-col class="text-center">
           <v-icon color="#b1b6ba">mdi-chart-areaspline</v-icon>
-        </v-col>
+        </v-col> -->
       </v-row>
     </v-footer>
   </v-app>
@@ -445,6 +444,9 @@ export default {
     },
   },
   methods: {
+    goto(path = "/"){
+      this.$router.push(path);
+    },
     isActive(menu) {
       return this.activeMenu === menu;
     },

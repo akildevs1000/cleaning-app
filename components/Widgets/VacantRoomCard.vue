@@ -1,5 +1,5 @@
 <template>
-  <span class="px-5">
+  <div style="max-height: 300px; overflow-y: scroll" class="mt-5 mb-10">
     <v-row no-gutters v-if="items && items.length > 0">
       <v-col cols="2" v-for="(item, index) in items" :key="index">
         <div class="ma-1 text-center" style="border-radius: 12px">
@@ -21,7 +21,7 @@
         </div>
       </v-col>
     </v-row>
-  </span>
+  </div>
 </template>
 
 <script>
@@ -38,9 +38,15 @@ export default {
         ? `background-color:#2ce860;color:white;`
         : `background-color:${this.bgColor};color:${this.color};`;
     },
+    // selectRoom(index, item) {
+    //   this.selectedIndex = index; // Set the selected index
+    //   this.$emit("selectedRoom", item); // Emit the event
+    // },
+
     selectRoom(index, item) {
-      this.selectedIndex = index; // Set the selected index
-      this.$emit("selectedRoom", item); // Emit the event
+      this.selectedIndex = index;
+      const queryData = encodeURIComponent(JSON.stringify(item));
+      this.$router.push({ path: "/selected_room", query: { data: queryData } });
     },
   },
 };
