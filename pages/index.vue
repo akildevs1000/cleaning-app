@@ -36,8 +36,7 @@
       </v-row>
       <v-row no-gutters>
         <v-col cols="12">
-          <div
-          >
+          <div>
             <WidgetsVacantRoomCard
               bgColor="#d9534f"
               color="white"
@@ -304,6 +303,11 @@ export default {
             room_no: e.room_no,
             room_type: e.room_type.name,
             is_cleaned: e.is_cleaned.length,
+            guest_name: e?.booked_room?.customer?.full_name || "---",
+            checkin_datetime_only_display:
+              e?.booked_room?.checkin_datetime_only_display,
+            checkout_datetime_only_display:
+              e?.booked_room?.checkout_datetime_only_display,
           }));
 
           let drs = data.dirtyRoomsList.map((e) => ({
@@ -312,6 +316,11 @@ export default {
             room_type: e.room_type.name,
             is_cleaned: e.is_cleaned.length,
             can_change_status: true,
+            guest_name: e?.booked_room?.customer?.full_name || "---",
+            checkin_datetime_only_display:
+              e?.booked_room?.checkin_datetime_only_display,
+            checkout_datetime_only_display:
+              e?.booked_room?.checkout_datetime_only_display,
           }));
 
           let ors = data.checkIn.map((e) => ({
@@ -319,6 +328,11 @@ export default {
             room_no: e.room_no,
             room_type: e.room_type.name,
             is_cleaned: e.is_cleaned.length,
+            guest_name: e?.booked_room?.customer?.full_name || "---",
+            checkin_datetime_only_display:
+              e?.booked_room?.checkin_datetime_only_display,
+            checkout_datetime_only_display:
+              e?.booked_room?.checkout_datetime_only_display,
           }));
 
           let brs = data.blockedRooms.map((e) => ({
@@ -326,6 +340,11 @@ export default {
             room_no: e.room_no,
             room_type: e.room_type.name,
             is_cleaned: e.is_cleaned.length,
+            guest_name: e?.booked_room?.customer?.full_name || "---",
+            checkin_datetime_only_display:
+              e?.booked_room?.checkin_datetime_only_display,
+            checkout_datetime_only_display:
+              e?.booked_room?.checkout_datetime_only_display,
           }));
 
           this.rooms = {

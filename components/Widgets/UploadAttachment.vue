@@ -36,7 +36,7 @@ export default {
       type: String,
     },
     color: {
-      default: "purple",
+      default: "primary",
       type: String,
     },
     validationMessage: {

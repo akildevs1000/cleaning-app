@@ -1,209 +1,362 @@
 <template>
-  <span class="pt-6">
-    <v-container>
-      <v-row>
-        <v-col cols="12">
-          <v-card outlined style="border-radius: 15px; padding: 16px">
-            <!-- Guest Info -->
-            <div class="d-flex align-center mb-4">
-              <v-icon color="black" class="mr-2">mdi-briefcase</v-icon>
-              <span class="text-subtitle-1 font-weight-medium"
-                >Guest: Jhon Wick</span
-              >
+  <span>
+    <style>
+      /* Apply body background directly to v-app to ensure it's not overridden */
+      .v-application {
+        background-color: #e8ebf0 !important; /* Changed to a slightly darker light grey for more prominence */
+      }
+
+      /* Ensure the primary color is applied directly to the button component */
+      .v-btn.v-btn--has-bg.primary {
+        background-color: #26a69a !important; /* Specific button background color */
+        border-color: #26a69a !important; /* Specific button border color */
+      }
+
+      /* Style for the individual information rows (cards) with white background */
+      .info-item-card {
+        background-color: white; /* Card background is white */
+        border-radius: 12px; /* Rounded corners for the info rows */
+        margin-bottom: 12px; /* Spacing between info rows */
+        padding: 12px 16px; /* Padding inside the info rows */
+        display: flex;
+        align-items: center;
+        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for individual info cards */
+      }
+
+      /* Remove generic icon color CSS as colors are now applied via props */
+      .info-item-card .v-list-item__icon .v-icon,
+      .info-item-card .v-icon {
+        margin-right: 16px; /* Space between icon and text */
+        /* color is now set by individual v-icon color prop */
+      }
+
+      .info-item-card .info-text-container {
+        flex-grow: 1;
+      }
+      .info-item-card .info-label {
+        font-size: 0.75rem; /* Smaller font for labels (e.g., "Number", "Guest Name") */
+        color: rgba(0, 0, 0, 0.6); /* Lighter color for labels */
+        line-height: 1;
+      }
+      .info-item-card .info-value {
+        font-size: 1rem; /* Standard font size for values (e.g., "305", "John Doe") */
+        font-weight: 500; /* Medium font weight for values */
+        color: rgba(0, 0, 0, 0.87); /* Darker color for values */
+        line-height: 1.5;
+      }
+
+      /* Center the toolbar title */
+      .v-toolbar__title {
+        text-align: center;
+        flex-grow: 1;
+      }
+
+      /* Enforce mobile-like width for the main content card */
+      .v-card {
+        width: 100%; /* Ensures the card takes full width up to max-width */
+        max-width: 400px; /* Constrains the max width to simulate a mobile device */
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+          0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 5px 0px rgba(0, 0, 0, 0.12); /* Add subtle shadow */
+        background-color: white !important; /* Main card background is white */
+        border-radius: 15px !important; /* Applied border-radius 15px as requested */
+      }
+
+      /* Style for the app bar to make it prominent */
+      .v-app-bar.v-toolbar {
+        background-color: #ffffff !important; /* White background for the app bar */
+        box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+          0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 10px 0px rgba(0, 0, 0, 0.12) !important; /* More pronounced shadow */
+        border-radius: 15px 15px 0 0 !important; /* Match top border radius of the card */
+      }
+
+      .v-app-bar .v-toolbar__title {
+        font-size: 1.5rem !important; /* Larger font size for the header title */
+        font-weight: 600 !important; /* Bolder title */
+        color: #333333 !important; /* Darker color for the title */
+      }
+
+      /* Styling for the new cleaning actions section */
+      .cleaning-actions-card {
+        padding: 24px;
+        padding-bottom: 90px; /* Add padding at the bottom to make space for the fixed button */
+      }
+      .cleaning-actions-card .v-btn {
+        margin-bottom: 12px; /* Add spacing between buttons */
+      }
+      .cleaning-actions-card .v-file-input {
+        margin-bottom: 24px; /* More space below file input */
+      }
+
+      /* Custom style for big icons on buttons */
+      .v-btn .v-icon.v-icon--left {
+        font-size: 36px !important; /* Increase icon size for buttons */
+      }
+
+      /* Styles for the v-file-input to make its icon big and match height */
+      .v-file-input .v-input__prepend-outer .v-icon {
+        font-size: 36px !important; /* Make file input icon big */
+      }
+
+      /* Adjust the height and alignment of the file input control */
+      .v-file-input .v-input__control {
+        min-height: 56px !important; /* Match x-large button height */
+      }
+      /* Adjust vertical alignment for the prepend icon in the file input */
+      .v-file-input .v-input__prepend-outer {
+        margin-top: 8px !important; /* Adjust vertical alignment for consistency */
+      }
+
+      /* Styles for the fixed "Stop Cleaning" button container */
+      .fixed-bottom-button-container {
+        position: fixed;
+        bottom: 0;
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Adjust for perfect centering */
+        width: 100%;
+        max-width: 400px; /* Match the max-width of the main card */
+        padding: 16px 24px; /* Add padding around the button */
+        z-index: 10; /* Ensure it stays on top */
+        border-top-left-radius: 15px; /* Apply border radius to match card corners */
+        border-top-right-radius: 15px; /* Apply border radius to match card corners */
+      }
+    </style>
+    <v-card flat class="mx-auto" width="100%">
+      <!-- New Header - v-app-bar -->
+
+      <!-- Guest Information Section (visible when not cleaning) -->
+      <v-card-text class="pa-6">
+        <h2 class="text-h6 font-weight-medium mb-4">Guest Information</h2>
+
+        <!-- Room Number -->
+        <div class="info-item-card">
+          <v-icon color="#42A5F5">mdi-door</v-icon>
+          <!-- Blue -->
+          <div class="info-text-container">
+            <div class="info-label">Number</div>
+            <div class="info-value">{{ selectedRoom?.room_no || "---" }}</div>
+          </div>
+        </div>
+
+        <!-- Room Type -->
+        <div class="info-item-card">
+          <v-icon color="#FFC107">mdi-bed</v-icon>
+          <!-- Amber -->
+          <div class="info-text-container">
+            <div class="info-label">Type</div>
+            <div class="info-value">{{ selectedRoom?.room_type || "---" }}</div>
+          </div>
+        </div>
+
+        <!-- Guest Name -->
+        <div class="info-item-card">
+          <v-icon color="#9C27B0">mdi-account</v-icon>
+          <!-- Purple -->
+          <div class="info-text-container">
+            <div class="info-label">Guest Name</div>
+            <div class="info-value">
+              {{ selectedRoom?.guest_name || "---" }}
             </div>
+          </div>
+        </div>
 
-            <!-- Room Details -->
-            <v-card-text class="pa-0 mb-4">
-              <div
-                class="d-flex justify-space-between px-4 py-2"
-                style="font-weight: 600; font-size: 1rem"
-              >
-                <div>
-                  Room: <b>{{ selectedRoom?.room_no || "---" }}</b>
+        <!-- Check In -->
+        <div class="info-item-card">
+          <v-icon color="#E57373">mdi-calendar</v-icon>
+          <!-- Light Red -->
+          <div class="info-text-container">
+            <div class="info-label">Check In</div>
+            <div class="info-value">
+              {{ selectedRoom?.checkin_datetime_only_display || "---" }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Check Out -->
+        <div class="info-item-card">
+          <v-icon color="#E57373">mdi-calendar</v-icon>
+          <!-- Light Red -->
+          <div class="info-text-container">
+            <div class="info-label">Check Out</div>
+            <div class="info-value">
+              {{ selectedRoom?.checkin_datetime_only_display || "---" }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Last Cleaned -->
+        <div class="info-item-card">
+          <v-icon color="#4CAF50">mdi-clock-outline</v-icon>
+          <!-- Green -->
+          <div class="info-text-container">
+            <div class="info-label">Last Cleaned</div>
+            <div class="info-value">Not available</div>
+          </div>
+        </div>
+      </v-card-text>
+
+      <!-- New Section for Cleaning Actions (visible when cleaning) -->
+      <v-card-text class="pa-6 cleaning-actions-card">
+        <v-card
+          class="pa-4 mb-6"
+          rounded="lg"
+          flat
+          outlined
+          :color="isDark ? darkColors.card : ''"
+          :dark="isDark"
+          :light="!isDark"
+        >
+          <v-row dense justify="space-around">
+            <v-col>
+              <div class="text-center mb-4">
+                <div
+                  class="mb-3"
+                  :class="isDark ? 'white--text' : 'grey--text'"
+                >
+                  Give feedback
                 </div>
-                <div>
-                  Room Type: <b>{{ selectedRoom?.room_type || "---" }}</b>
-                </div>
+                <v-btn-toggle rounded color="primary">
+                  <v-btn value="sad" x-large @click="setStatus('Dirty')">
+                    <v-icon x-large color="error">mdi-emoticon-sad</v-icon>
+                  </v-btn>
+                  <v-btn value="neutral" x-large @click="setStatus('Neutral')">
+                    <v-icon x-large color="yellow darken-3"
+                      >mdi-emoticon-neutral</v-icon
+                    >
+                  </v-btn>
+                  <v-btn value="happy" x-large @click="setStatus('Cleaned')">
+                    <v-icon x-large color="success">mdi-emoticon-happy</v-icon>
+                  </v-btn>
+                </v-btn-toggle>
               </div>
-            </v-card-text>
+            </v-col>
+          </v-row>
+        </v-card>
 
-            <!-- Main Content -->
-            <v-card-title
-              class="d-flex flex-column flex-sm-row align-center pa-0"
+        <v-card
+          class="pt-8 px-8 pb-2"
+          rounded="lg"
+          flat
+          outlined
+          :color="isDark ? darkColors.card : ''"
+          :dark="isDark"
+          :light="!isDark"
+        >
+          <v-row dense>
+            <v-col
+              class="text-center"
+              :class="isDark ? 'white--text' : 'grey--text'"
             >
-              <div class="pa-3">
-                <img
-                  src="/bed.png"
-                  alt="Room Bed"
-                  style="height: 80px; width: 80px; border-radius: 8px"
+              Take Photo or Record Voice
+            </v-col>
+            <v-col cols="12">
+              <v-btn
+                class="pa-6"
+                block
+                outlined
+                rounded
+                color="primary"
+                :dark="isDark"
+                :light="!isDark"
+              >
+                <WidgetsUploadAttachment
+                  validationMessage="Room not found"
+                  :rule="selectedRoom"
+                  :displayPreview="false"
+                  :label="`${selectedRoom?.room_no}_${Date.now()}.png`"
+                  :name="`${selectedRoom?.room_no}_${Date.now()}.png`"
+                  @file-selected="
+                    handleFileSelection(
+                      $event,
+                      `${selectedRoom?.room_no}_${Date.now()}.png`
+                    )
+                  "
                 />
-              </div>
-            </v-card-title>
-
-            <v-row class="py-5">
-              <!-- Left side: Upload + Voice -->
-              <v-col cols="6">
-                <div style="display: flex">
-                  <div>
-                    <WidgetsUploadAttachment
-                      validationMessage="Room not found"
-                      :rule="selectedRoom"
-                      :displayPreview="false"
-                      :label="`${selectedRoom?.room_no}_${Date.now()}.png`"
-                      :name="`${selectedRoom?.room_no}_${Date.now()}.png`"
-                      @file-selected="
-                        handleFileSelection(
-                          $event,
-                          `${selectedRoom?.room_no}_${Date.now()}.png`
-                        )
-                      "
-                    />
-                  </div>
-                  <div>
-                    <WidgetsVoice
-                      @voice-note="
-                        handleVoiceNote(
-                          $event,
-                          `${selectedRoom?.room_no}_${Date.now()}.mp3`
-                        )
-                      "
-                    />
-                  </div>
-                </div>
-              </v-col>
-
-              <!-- Right side: Status Emojis -->
-              <v-col cols="6" class="text-right">
-                <div style="display: flex; justify-content: end">
-                  <div>
-                    <v-icon
-                      large
-                      :color="happyStatus.color"
-                      @click="setStatus('Cleaned')"
-                      style="cursor: pointer"
-                    >
-                      {{ happyStatus.icon }}
-                    </v-icon>
-                  </div>
-                  <div>
-                    <v-icon
-                      large
-                      :color="neutralStatus.color"
-                      @click="setStatus('Neutral')"
-                      style="cursor: pointer"
-                    >
-                      {{ neutralStatus.icon }}
-                    </v-icon>
-                  </div>
-                  <div>
-                    <v-icon
-                      large
-                      :color="sadStatus.color"
-                      @click="setStatus('Dirty')"
-                      style="cursor: pointer"
-                    >
-                      {{ sadStatus.icon }}
-                    </v-icon>
-                  </div>
-                </div>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6">
-                <div class="d-flex justify-space-between flex-wrap">
-                  <div class="d-flex align-center mb-2 mb-sm-0">
-                    <v-icon color="black" class="mr-2"
-                      >mdi-clock-outline</v-icon
-                    >
-                    <span class="text-subtitle-1"
-                      >Check In {{ FormData?.start_time }}</span
-                    >
-                  </div>
-
-                  <div class="d-flex align-center">
-                    <v-icon color="black" class="mr-2"
-                      >mdi-clock-outline</v-icon
-                    >
-                    <span class="text-subtitle-1"
-                      >Last Cleaned {{ FormData?.end_time }}</span
-                    >
-                  </div>
-                </div>
-              </v-col>
-            </v-row>
-            <v-row no-gutters class="pt-10">
-              <v-col cols="12" class="mb-3">
-                <v-btn
-                  class="success darken-1 white--text"
-                  block
-                  @click="start"
-                >
-                  Start Cleaning
-                </v-btn>
-              </v-col>
-
-              <v-col cols="12">
-                <v-btn
-                  block
-                  class="white--text"
-                  style="background-color: #ec5a5a"
-                  @click="stop"
-                >
-                  Stop Cleaning
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
+                Photo
+              </v-btn>
+            </v-col>
+            <v-col cols="12">
+              <v-btn
+                class="pa-6"
+                block
+                outlined
+                rounded
+                color="primary"
+                :dark="isDark"
+                :light="!isDark"
+              >
+                <WidgetsVoice
+                  @voice-note="
+                    handleVoiceNote(
+                      $event,
+                      `${selectedRoom?.room_no}_${Date.now()}.mp3`
+                    )
+                  "
+                />
+                Voice
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+        <div class="mt-5">
+          <v-btn
+            block
+            x-large
+            dark
+            class="rounded-pill"
+            color="primary"
+            @click="start"
+          >
+            <v-icon left>mdi-play</v-icon>
+            START CLEANING
+          </v-btn>
+        </div>
+        <div>
+          <v-btn
+            block
+            x-large
+            dark
+            color="error"
+            class="rounded-pill"
+            @click="stop"
+          >
+            <v-icon left>mdi-stop-circle-outline</v-icon>
+            Stop Cleaning
+          </v-btn>
+        </div>
+      </v-card-text>
+    </v-card>
   </span>
 </template>
 <script>
 export default {
   data() {
     return {
-      happyStatus: {
-        icon: `mdi-emoticon-happy`,
-        color: `green lighten-1`,
-      },
-      sadStatus: {
-        icon: `mdi-emoticon-sad`,
-        color: `red lighten-1`,
-      },
-      neutralStatus: {
-        icon: `mdi-emoticon-neutral`,
-        color: `yellow darken-1`,
-      },
-      isStart: true,
-      isStop: false,
+      isDark: false,
       selectedRoom: null,
+      isCleaningStarted: false, // New data property to control section visibility
       isInitialState: true,
+
       FormData: {
         start_time: "00:00:00",
         end_time: "00:00:00",
         status: "Dirty",
       },
-      tabId: 0,
-      cards: [],
-      filterDate: new Date().toJSON().slice(0, 10),
-
-      loading: true,
-      rooms: [],
-      progress: null,
       attachments: [],
     };
-  },
-  watch: {
-    fieldName() {},
   },
   mounted() {
     const data = this.$route.query.data;
     if (data) {
       try {
         this.selectedRoom = JSON.parse(decodeURIComponent(data));
+        console.log("🚀 ~ mounted ~ this.selectedRoom:", this.selectedRoom);
       } catch {
         this.selectedRoom = data;
+        console.log("🚀 ~ mounted ~ this.selectedRoom:", this.selectedRoom);
       }
     }
   },
@@ -241,44 +394,24 @@ export default {
         alert(`Room not Selected`);
         return;
       }
+
+      this.isCleaningStarted = true;
+
+      let startTime = this.isInitialState
+        ? this.formatTime(new Date())
+        : this.FormData.start_time;
+      console.log("🚀 ~ start ~ startTime:", startTime);
+
       this.FormData = {
         ...this.FormData,
-        start_time: this.isInitialState
-          ? this.formatTime(new Date())
-          : this.FormData.start_time,
+        start_time: startTime,
         end_time: "00:00:00", // Reset end time when starting
       };
+      console.log("🚀 ~ start ~ this.FormData:", this.FormData);
 
-      this.isStart = false;
-      this.isStop = true;
       this.isInitialState = false; // Flag that initial state is done
     },
     setStatus(status) {
-      const isCleaned = status === "Cleaned";
-
-      this.happyStatus = {
-        icon: "mdi-emoticon-happy",
-        color: "green lighten-1",
-      };
-
-      this.sadStatus = {
-        icon: "mdi-emoticon-sad",
-        color: "red lighten-1",
-      };
-
-      this.neutralStatus = {
-        icon: "mdi-emoticon-neutral",
-        color: "yellow darken-1",
-      };
-
-      if (status === "Cleaned") {
-        this.happyStatus.color = "green darken-1";
-      } else if (status === "Dirty") {
-        this.sadStatus.color = "red darken-1";
-      } else if (status === "Neutral") {
-        this.neutralStatus.color = "yellow darken-2";
-      }
-
       this.FormData = {
         ...this.FormData,
         start_time: this.isInitialState
@@ -289,6 +422,9 @@ export default {
       };
     },
     async stop() {
+
+      this.isCleaningStarted = false;
+
       const now = new Date();
       const hours = now.getHours().toString().padStart(2, "0");
       const minutes = now.getMinutes().toString().padStart(2, "0");
@@ -313,41 +449,9 @@ export default {
 
       await this.$axios.post(`room-cleaning`, this.FormData);
 
-      this.isStop = false;
-      this.isStart = true;
       this.isInitialState = true;
 
       this.$router.push("/");
-    },
-    setTabId(e) {
-      if (!this.isInitialState) {
-        return;
-      }
-      this.tabId = e;
-      this.FormData = {
-        start_time: "00:00:00",
-        end_time: "00:00:00",
-        status: "Dirty",
-      };
-      this.selectedRoom = null;
-      this.isInitialState = true;
-      this.isStop = false;
-      this.isStart = true;
-    },
-    getSubValue(length, total) {
-      return length - total < 0 ? "0" : (length - total).toString();
-    },
-    async getRoomStatus(room_ids) {
-      let config = {
-        params: {
-          room_ids: room_ids,
-          date: new Date().toISOString().split("T")[0],
-          company_id: this.$auth.user.company_id,
-        },
-      };
-      let { data } = await this.$axios.get(`room-cleaning`, config);
-
-      return data.data.length;
     },
   },
 };
