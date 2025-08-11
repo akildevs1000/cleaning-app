@@ -20,32 +20,80 @@
         border-radius: 50px;
         animation: pulse 1s infinite;
       }
-
-       {
-      }
     </style>
-    <v-icon large @click="startRecording" color="primary" v-if="!isRecording"
-      >mdi-microphone-outline</v-icon
-    >
-
-    <v-icon
-      large
-      :class="`${isRecording ? 'recording-active' : ''}`"
-      @click="stopRecording"
+    <v-btn
+      v-if="!isRecording"
+      @click="startRecording"
+      class="pa-6"
+      block
+      outlined
+      rounded
       color="primary"
-      v-if="isRecording"
-      >mdi-microphone-outline</v-icon
     >
+      <v-icon large color="primary">mdi-microphone-outline</v-icon>
+      Voice
+    </v-btn>
 
-    <!-- <v-icon large @click="playRecording" v-if="recordedBlob" color="success"
-      >mdi-play-circle-outline</v-icon
-    > -->
-    <audio
-      style="display: none"
-      ref="audioPlayer"
-      :src="audioUrl"
-      controls
-    ></audio>
+    <v-btn
+      v-if="isRecording"
+      @click="stopRecording"
+      class="pa-6"
+      block
+      outlined
+      rounded
+      color="primary"
+    >
+      <v-icon
+        large
+        :class="`${isRecording ? 'recording-active' : ''}`"
+        color="primary"
+        >mdi-microphone-outline</v-icon
+      >
+      Voice
+    </v-btn>
+
+    <v-btn
+      class="pa-6"
+      block
+      outlined
+      rounded
+      color="primary"
+      v-if="recordedBlob"
+    >
+      <!-- WhatsApp style player -->
+      <v-icon large @click.stop="togglePlay" color="success">
+        {{ isPlaying ? "mdi-pause" : "mdi-play" }}
+      </v-icon>
+
+      <v-slider
+        hide-details
+        v-model="progress"
+        step="1"
+        :max="recordingDuration"
+        min="0"
+      ></v-slider>
+
+      <span style="min-width: 40px">{{ formatTime(currentTime) }}</span>
+      <v-icon @click="recordedBlob = null"> mdi-close </v-icon>
+
+      <!-- hidden audio -->
+      <audio
+        controls
+        ref="customAudioPlayer"
+        :src="audioUrl"
+        @timeupdate="updateProgress"
+        @ended="isPlaying = false"
+        style="display: none"
+      ></audio>
+
+      <!-- here i want to new code also dont change my existing -->
+      <!-- <audio
+        style="width: 100%; height: 30px"
+        ref="audioPlayer"
+        :src="audioUrl"
+        controls
+      ></audio> -->
+    </v-btn>
   </span>
 </template>
 
@@ -59,6 +107,13 @@ export default {
       audioChunks: [],
       recordedBlob: null,
       audioUrl: null,
+
+      isPlaying: false,
+      progress: 0,
+      currentTime: 0,
+
+      recordingDuration: 0,
+      recordingTimer: null,
     };
   },
   methods: {
@@ -73,6 +128,7 @@ export default {
 
     async startRecording() {
       this.recordedBlob = null;
+      this.recordingDuration = 0; // reset duration counter
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
@@ -82,32 +138,58 @@ export default {
         this.isRecording = true;
         this.audioChunks = [];
 
+        // Start a timer that increments recordingDuration every second
+        this.recordingTimer = setInterval(() => {
+          this.recordingDuration++;
+        }, 1000);
+
         this.mediaRecorder.addEventListener("dataavailable", (event) => {
           this.audioChunks.push(event.data);
         });
 
         this.mediaRecorder.addEventListener("stop", async () => {
-          this.recordedBlob = new Blob(this.audioChunks, {
-            type: "audio/mpeg",
-          });
+          clearInterval(this.recordingTimer); // stop timer when recording stops
+
+          const mimeType = this.audioChunks[0]?.type || "audio/webm";
+          this.recordedBlob = new Blob(this.audioChunks, { type: mimeType });
           this.audioUrl = URL.createObjectURL(this.recordedBlob);
-          this.$emit(`voice-note`, await this.blobToBase64(this.recordedBlob));
+
+          this.$emit("voice-note", await this.blobToBase64(this.recordedBlob));
+
+          console.log("Recording duration (seconds):", this.recordingDuration);
         });
       } catch (error) {
         console.error("Error accessing the microphone", error);
       }
     },
+
     async stopRecording() {
-      if (this.mediaRecorder) {
+      if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
         this.mediaRecorder.stop();
         this.isRecording = false;
+        this.currentTime = this.recordingDuration;
+        clearInterval(this.recordingTimer); // just to be safe
       }
     },
-    playRecording() {
-      const audioPlayer = this.$refs.audioPlayer;
-      if (audioPlayer && this.audioUrl) {
-        audioPlayer.play();
+    togglePlay() {
+      const audio = this.$refs.customAudioPlayer;
+      if (audio.paused) {
+        audio.play();
+        this.isPlaying = true;
+      } else {
+        audio.pause();
+        this.isPlaying = false;
       }
+    },
+    updateProgress() {
+      const audio = this.$refs.customAudioPlayer;
+      this.currentTime = Math.floor(audio.currentTime);
+      this.progress = this.currentTime;
+    },
+    formatTime(sec) {
+      const minutes = Math.floor(sec / 60);
+      const seconds = sec % 60;
+      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
     },
   },
 };

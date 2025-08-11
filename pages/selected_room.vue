@@ -293,25 +293,14 @@
               </v-btn>
             </v-col>
             <v-col cols="12">
-              <v-btn
-                class="pa-6"
-                block
-                outlined
-                rounded
-                color="primary"
-                :dark="isDark"
-                :light="!isDark"
-              >
-                <WidgetsVoice
-                  @voice-note="
-                    handleVoiceNote(
-                      $event,
-                      `${selectedRoom?.room_no}_${Date.now()}.mp3`
-                    )
-                  "
-                />
-                Voice
-              </v-btn>
+              <WidgetsVoice
+                @voice-note="
+                  handleVoiceNote(
+                    $event,
+                    `${selectedRoom?.room_no}_${Date.now()}.mp3`
+                  )
+                "
+              />
             </v-col>
           </v-row>
         </v-card>
