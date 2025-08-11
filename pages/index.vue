@@ -147,7 +147,12 @@ export default {
             checkout_datetime_only_display:
               e.booked_room?.checkout_datetime_only_display,
             ...extra,
-            room_cleaning_status_count:e.room_cleaning_status_count
+            room_cleaning_status_count: e.room_cleaning_status_count,
+            last_cleaned_at:
+              e.is_cleaned?.[0]?.last_cleaned_at ??
+              e.is_neutral?.[0]?.last_cleaned_at ??
+              e.is_dirty?.[0]?.last_cleaned_at ??
+              "",
           }));
 
         // Room category arrays
@@ -178,28 +183,36 @@ export default {
             color: "white",
             bgColor: "#d9534f",
             label: "Dirty",
-            value: drs.map(e => e.room_cleaning_status_count).reduce((acc,cur) => acc + cur, 0),
+            value: drs
+              .map((e) => e.room_cleaning_status_count)
+              .reduce((acc, cur) => acc + cur, 0),
             sub_value: this.getSubValue(dirty.length, totalDirty),
           },
           {
             color: "black",
             bgColor: "#ddbc91",
             label: "Occupied",
-            value: ors.map(e => e.room_cleaning_status_count).reduce((acc,cur) => acc + cur, 0),
+            value: ors
+              .map((e) => e.room_cleaning_status_count)
+              .reduce((acc, cur) => acc + cur, 0),
             sub_value: this.getSubValue(occupied.length, totalOccupied),
           },
           {
             color: "black",
             bgColor: "#f5ece3",
             label: "Vacant",
-            value: vrs.map(e => e.room_cleaning_status_count).reduce((acc,cur) => acc + cur, 0),
+            value: vrs
+              .map((e) => e.room_cleaning_status_count)
+              .reduce((acc, cur) => acc + cur, 0),
             sub_value: this.getSubValue(vacantRooms.length, totalVac),
           },
           {
             color: "white",
             bgColor: "#75a29f",
             label: "Blocked",
-            value: brs.map(e => e.room_cleaning_status_count).reduce((acc,cur) => acc + cur, 0),
+            value: brs
+              .map((e) => e.room_cleaning_status_count)
+              .reduce((acc, cur) => acc + cur, 0),
             sub_value: this.getSubValue(blocked.length, totalBlocked),
           },
         ];

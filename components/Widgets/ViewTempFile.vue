@@ -3,8 +3,18 @@
     <AssetsIconClose left="290" @click="dialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"
-        ><v-icon color="purple">mdi-eye-outline</v-icon></span
-      >
+        ><v-img 
+          v-bind="attrs"
+          v-on="on"
+          :src="src"
+          :alt="altText"
+          max-width="50"
+          max-height="50"
+          class="thumbnail activator"
+          contain
+          elevation="2"
+          rounded
+      /></span>
     </template>
 
     <v-card>

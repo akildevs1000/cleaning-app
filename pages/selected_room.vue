@@ -207,7 +207,7 @@
           <!-- Green -->
           <div class="info-text-container">
             <div class="info-label">Last Cleaned</div>
-            <div class="info-value">Not available</div>
+            <div class="info-value">{{selectedRoom?.last_cleaned_at || "Not Available" }}</div>
           </div>
         </div>
       </v-card-text>
@@ -267,30 +267,15 @@
               Take Photo or Record Voice
             </v-col>
             <v-col cols="12">
-              <v-btn
-                class="pa-6"
-                block
-                outlined
-                rounded
-                color="primary"
-                :dark="isDark"
-                :light="!isDark"
-              >
                 <WidgetsUploadAttachment
                   validationMessage="Room not found"
                   :rule="selectedRoom"
                   :displayPreview="false"
                   :label="`${selectedRoom?.room_no}_${Date.now()}.png`"
-                  :name="`${selectedRoom?.room_no}_${Date.now()}.png`"
-                  @file-selected="
-                    handleFileSelection(
-                      $event,
-                      `${selectedRoom?.room_no}_${Date.now()}.png`
-                    )
-                  "
+                  @files-selected="handleFileSelection"
                 />
-                Photo
-              </v-btn>
+               
+             
             </v-col>
             <v-col cols="12">
               <WidgetsVoice
@@ -374,15 +359,14 @@ export default {
     setStatus(status = "Cleaned") {
       this.FormData.status = status;
     },
-    handleFileSelection(e, name) {
+    handleFileSelection(e) {
       this.FormData = {
         ...this.FormData,
         start_time: this.isInitialState
           ? this.formatTime(new Date())
           : this.FormData.start_time,
         ...this.selectedRoom,
-        before_attachment: e,
-        before_attachment_name: name,
+        attachments: e,
       };
       this.isInitialState = false;
     },

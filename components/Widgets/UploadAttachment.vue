@@ -1,27 +1,49 @@
 <template>
-  <span>
+  <div>
     <input
       type="file"
-      :ref="`fileInput`"
+      :ref="'fileInput'"
       style="display: none"
+      multiple
       @change="handleFileInputChange"
     />
-    <v-icon  color="red" v-if="isFileSelect" @click="clearImage"
-      >mdi-close</v-icon
+
+    <div  v-if="files.length">
+      <div
+        v-for="(file, index) in files"
+        :key="file.key"
+        style="display: inline-block; margin: 8px; position: relative"
+      >
+        <v-icon
+          color="red"
+          small
+          style="position: absolute; top: -10px; right: -10px; cursor: pointer"
+          @click="removeFile(index)"
+        >
+          mdi-close
+        </v-icon>
+
+        <component
+          :label="`${name} ${file.size}`"
+          icon="mdi-eye-outline"
+          :is="currentComponent"
+          :src="file.preview"
+          style="max-width: 150px; max-height: 150px"
+        />
+      </div>
+    </div>
+     <v-btn
+      @click="triggerFileInput"
+      class="pa-6"
+      block
+      outlined
+      rounded
+      color="primary"
     >
-    <span v-if="isFileSelect">
-      <component
-        :label="`${name} ${imageSize}`"
-        :key="newDialogKey"
-        icon="mdi-eye-outline"
-        :is="currentComponent"
-        :src="preview"
-      />
-    </span>
-    <v-icon v-else large @click="triggerFileInput" :color="color"
-      >mdi-camera-outline</v-icon
+      <v-icon large :color="color">mdi-camera-outline</v-icon>
+      Photo</v-btn
     >
-  </span>
+  </div>
 </template>
 
 <script>
@@ -47,36 +69,37 @@ export default {
       default: true,
     },
   },
-  data: () => ({
-    isFileSelect: false,
-    preview: null,
-    currentComponent: null,
-    viewFileSrc: "",
-    newDialogKey: 1,
-    imageSize: null,
-  }),
+  data() {
+    return {
+      showUploads:false,
+      files: [], // Array of { file, preview, size, key }
+      currentComponent: "WidgetsViewTempFile",
+      keyCounter: 1,
+    };
+  },
   methods: {
-    clearImage() {
-      this.preview = null;
-      this.isFileSelect = false;
-      this.$refs[`fileInput`].value = "";
-    },
     triggerFileInput() {
       if (!this.rule) {
         alert(this.validationMessage);
         return;
       }
-
-      this.$refs[`fileInput`].click();
+      this.$refs.fileInput.click();
     },
 
-    handleFileInputChange(event) {
-      const file = event.target.files[0];
+    async handleFileInputChange(event) {
+      const selectedFiles = Array.from(event.target.files);
+      if (!selectedFiles.length) return;
 
-      console.log(file);
+      for (const file of selectedFiles) {
+        await this.compressAndPreview(file);
+      }
 
-      if (file) {
-        this.isFileSelect = true;
+      // Clear input to allow selecting same files again if needed
+      this.$refs.fileInput.value = "";
+    },
+
+    compressAndPreview(file) {
+      return new Promise((resolve) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = (e) => {
@@ -92,7 +115,7 @@ export default {
             canvas.toBlob(
               (blob) => {
                 const compressedFile = new File([blob], file.name, {
-                  type: "image/jpeg", // Change to the desired image type if needed
+                  type: "image/jpeg",
                   lastModified: Date.now(),
                 });
 
@@ -101,28 +124,48 @@ export default {
                 compressedReader.onload = (compressedEvent) => {
                   const compressedDataUrl = compressedEvent.target.result;
 
-                  // Update the preview and emit events
-                  this.preview = compressedDataUrl;
-
-                  // Get the new file size in KB
                   const fileSizeInKB = (compressedFile.size / 1024).toFixed(2);
-                  this.imageSize = `(${fileSizeInKB} KB)`;
 
-                  this.$emit("file-preview", compressedDataUrl);
-                  this.$emit("file-selected", compressedDataUrl);
+                  this.files.push({
+                    key: this.keyCounter++,
+                    file: compressedFile,
+                    preview: compressedDataUrl,
+                    size: `(${fileSizeInKB} KB)`,
+                  });
 
-                  ++this.newDialogKey;
-                  this.currentComponent = "WidgetsViewTempFile"; // Set the component name to render
+                  // Emit array of all previews
+                  this.$emit(
+                    "files-preview",
+                    this.files.map((f) => f.preview)
+                  );
+                  this.$emit(
+                    "files-selected",
+                    this.files.map((f) => f.preview)
+                  );
+
+                  resolve();
                 };
               },
               "image/jpeg",
               0.3
-            ); // Adjust the image quality (0.7 is a good balance)
+            );
           };
         };
-      } else {
-        this.isFileSelect = false;
-      }
+      });
+    },
+
+    removeFile(index) {
+      this.files.splice(index, 1);
+
+      // Emit updated arrays
+      this.$emit(
+        "files-preview",
+        this.files.map((f) => f.preview)
+      );
+      this.$emit(
+        "files-selected",
+        this.files.map((f) => f.preview)
+      );
     },
   },
 };
