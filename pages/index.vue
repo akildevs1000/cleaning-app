@@ -41,28 +41,24 @@
               bgColor="#d9534f"
               color="white"
               v-if="tabId == 0"
-              @selectedRoom="handleSelectedRoom"
               :items="rooms.DirtyRooms"
             />
             <WidgetsVacantRoomCard
               bgColor="#ddbc91"
               color="black"
               v-if="tabId == 1"
-              @selectedRoom="handleSelectedRoom"
               :items="rooms.Occupied"
             />
             <WidgetsVacantRoomCard
               bgColor="#f5ece3"
               color="black"
               v-if="tabId == 2"
-              @selectedRoom="handleSelectedRoom"
               :items="rooms.vacantRooms"
             />
             <WidgetsVacantRoomCard
               bgColor="#75a29f"
               color="white"
               v-if="tabId == 3"
-              @selectedRoom="handleSelectedRoom"
               :items="rooms.blockedRooms"
             />
           </div>
@@ -75,321 +71,151 @@
 export default {
   data() {
     return {
-      happyStatus: {
-        icon: `mdi-emoticon-happy`,
-        color: `green lighten-1`,
-      },
-      sadStatus: {
-        icon: `mdi-emoticon-sad`,
-        color: `red lighten-1`,
-      },
-      neutralStatus: {
-        icon: `mdi-emoticon-neutral`,
-        color: `yellow darken-1`,
-      },
-      isStart: true,
-      isStop: false,
-      selectedRoom: null,
-      isInitialState: true,
-      FormData: {
-        start_time: "00:00:00",
-        end_time: "00:00:00",
-        status: "Dirty",
-      },
       tabId: 2,
       cards: [],
-      filterDate: new Date().toJSON().slice(0, 10),
-
-      loading: true,
       rooms: [],
       progress: null,
-      attachments: [],
     };
-  },
-  watch: {
-    fieldName() {},
   },
   created() {
     this.room_list();
-    // setInterval(() => {
-    //   this.room_list();
-    // }, 1000 * 10);
   },
 
   methods: {
-    handleSelectedRoom(e) {
-      this.selectedRoom = e;
-    },
-    handleFileSelection(e, name) {
-      this.FormData = {
-        ...this.FormData,
-        start_time: this.isInitialState
-          ? this.formatTime(new Date())
-          : this.FormData.start_time,
-        ...this.selectedRoom,
-        before_attachment: e,
-        before_attachment_name: name,
-      };
-      this.isInitialState = false;
-    },
-
-    handleVoiceNote(e, name) {
-      this.FormData = {
-        ...this.FormData,
-        voice_note: e,
-        voice_note_name: name,
-      };
-    },
-
-    formatTime(date) {
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      const seconds = String(date.getSeconds()).padStart(2, "0");
-
-      return `${hours}:${minutes}:${seconds}`;
-    },
-    start() {
-      if (!this.selectedRoom) {
-        alert(`Room not Selected`);
-        return;
-      }
-      this.FormData = {
-        ...this.FormData,
-        start_time: this.isInitialState
-          ? this.formatTime(new Date())
-          : this.FormData.start_time,
-        end_time: "00:00:00", // Reset end time when starting
-      };
-
-      this.isStart = false;
-      this.isStop = true;
-      this.isInitialState = false; // Flag that initial state is done
-    },
-    setStatus(status) {
-      const isCleaned = status === "Cleaned";
-
-      this.happyStatus = {
-        icon: "mdi-emoticon-happy",
-        color: "green lighten-1",
-      };
-
-      this.sadStatus = {
-        icon: "mdi-emoticon-sad",
-        color: "red lighten-1",
-      };
-
-      this.neutralStatus = {
-        icon: "mdi-emoticon-neutral",
-        color: "yellow darken-1",
-      };
-
-      if (status === "Cleaned") {
-        this.happyStatus.color = "green darken-1";
-      } else if (status === "Dirty") {
-        this.sadStatus.color = "red darken-1";
-      } else if (status === "Neutral") {
-        this.neutralStatus.color = "yellow darken-2";
-      }
-
-      this.FormData = {
-        ...this.FormData,
-        start_time: this.isInitialState
-          ? this.formatTime(new Date())
-          : this.FormData.start_time,
-        ...this.selectedRoom,
-        status,
-      };
-    },
-    async stop() {
-      const now = new Date();
-      const hours = now.getHours().toString().padStart(2, "0");
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-      const seconds = now.getSeconds().toString().padStart(2, "0");
-
-      this.FormData = {
-        ...this.FormData,
-        end_time: `${hours}:${minutes}:${seconds}`,
-
-        total_time: this.$utils.calculateTotalTime(
-          this.FormData.start_time,
-          `${hours}:${minutes}:${seconds}`
-        ),
-        cleaned_by_user_id: this.$auth.user.id,
-        company_id: this.$auth.user.company_id,
-        room_id: this.selectedRoom.id,
-      };
-
-      console.log(this.FormData);
-
-      // return;
-
-      await this.$axios.post(`room-cleaning`, this.FormData);
-
-      this.isStop = false;
-      this.isStart = true;
-      this.isInitialState = true;
-      this.room_list();
-    },
-    setTabId(e) {
-      if (!this.isInitialState) {
-        return;
-      }
-      this.tabId = e;
-      this.FormData = {
-        start_time: "00:00:00",
-        end_time: "00:00:00",
-        status: "Dirty",
-      };
-      this.selectedRoom = null;
-      this.isInitialState = true;
-      this.isStop = false;
-      this.isStart = true;
+    setTabId(index) {
+      this.tabId = index;
     },
     async room_list() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user && this.$auth.user.company.id,
-          check_in: new Date().toJSON().slice(0, 10),
-          filter_date: this.filterDate,
-        },
-      };
-      this.$axios
-        .get(`room_list_grid_for_house_keeping`, payload)
-        .then(async ({ data }) => {
-          if (!data.status) {
-            this.alert("Failure!", data.data, "error");
-            return false;
-          }
-          this.rooms = data;
+      try {
+        const today = new Date().toISOString().slice(0, 10);
 
-          let BookedRooms = data.bookedRooms;
+        const payload = {
+          params: {
+            company_id: this.$auth.user?.company.id,
+            check_in: today,
+            filter_date: today,
+          },
+        };
 
-          let sold = BookedRooms.map((e) => e.room_no);
-          let expectCheckOut = data.expectCheckOut.map((e) => e.room_no);
-          let Occupied = data.checkIn.map((e) => e.room_no);
-          let blockedRooms = data.blockedRooms.map((e) => e.room_no);
-          let dirtyRooms = data.dirtyRoomsList.map((e) => e.room_no);
+        const { data } = await this.$axios.get(
+          "room_list_grid_for_house_keeping",
+          payload
+        );
 
-          let allRoomNumbers = [
-            ...sold,
-            ...expectCheckOut,
-            ...Occupied,
-            ...blockedRooms,
-            ...dirtyRooms,
-          ];
+        if (!data.status) {
+          this.alert("Failure!", data.data, "error");
+          return;
+        }
 
-          let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
+        const {
+          bookedRooms,
+          expectCheckOut,
+          checkIn,
+          blockedRooms,
+          dirtyRoomsList,
+          allRooms,
+        } = data;
 
-          let allRoomList = data.allRooms;
-          let vacantRooms = allRoomList.filter(
-            (e) => !uniqueRoomNumbers.includes(e.room_no)
-          );
+        // Helper: Extract room numbers
+        const getRoomNumbers = (list) => list.map((e) => e.room_no);
 
-          this.Occupied = data.checkIn;
+        const sold = getRoomNumbers(bookedRooms);
+        const expectCO = getRoomNumbers(expectCheckOut);
+        const occupied = getRoomNumbers(checkIn);
+        const blocked = getRoomNumbers(blockedRooms);
+        const dirty = getRoomNumbers(dirtyRoomsList);
 
-          let totalDirty = await this.getRoomStatus(
-            data.dirtyRoomsList.map((e) => e.id)
-          );
-          let totalOccupied = await this.getRoomStatus(
-            data.checkIn.map((e) => e.id)
-          );
-          let totalVac = await this.getRoomStatus(vacantRooms.map((e) => e.id));
-          let totalBlocked = await this.getRoomStatus(
-            data.blockedRooms.map((e) => e.id)
-          );
+        const uniqueRoomNumbers = [
+          ...new Set([...sold, ...expectCO, ...occupied, ...blocked, ...dirty]),
+        ];
+        const vacantRooms = allRooms.filter(
+          (e) => !uniqueRoomNumbers.includes(e.room_no)
+        );
 
-          let vrs = vacantRooms.map((e) => ({
+        // Helper: Common room mapping
+        const mapRoomData = (list, extra = {}) =>
+          list.map((e) => ({
             id: e.id,
             room_no: e.room_no,
             room_type: e.room_type.name,
             is_cleaned: e.is_cleaned.length,
-            guest_name: e?.booked_room?.customer?.full_name || "---",
+            is_neutral: e.is_neutral.length,
+            is_dirty: e.is_dirty.length,
+            guest_name: e.booked_room?.customer?.full_name || "---",
             checkin_datetime_only_display:
-              e?.booked_room?.checkin_datetime_only_display,
+              e.booked_room?.checkin_datetime_only_display,
             checkout_datetime_only_display:
-              e?.booked_room?.checkout_datetime_only_display,
+              e.booked_room?.checkout_datetime_only_display,
+            ...extra,
+            room_cleaning_status_count:e.room_cleaning_status_count
           }));
 
-          let drs = data.dirtyRoomsList.map((e) => ({
-            id: e.id,
-            room_no: e.room_no,
-            room_type: e.room_type.name,
-            is_cleaned: e.is_cleaned.length,
-            can_change_status: true,
-            guest_name: e?.booked_room?.customer?.full_name || "---",
-            checkin_datetime_only_display:
-              e?.booked_room?.checkin_datetime_only_display,
-            checkout_datetime_only_display:
-              e?.booked_room?.checkout_datetime_only_display,
-          }));
+        // Room category arrays
+        const vrs = mapRoomData(vacantRooms);
+        const drs = mapRoomData(dirtyRoomsList, { can_change_status: true });
+        const ors = mapRoomData(checkIn);
+        const brs = mapRoomData(blockedRooms);
 
-          let ors = data.checkIn.map((e) => ({
-            id: e.id,
-            room_no: e.room_no,
-            room_type: e.room_type.name,
-            is_cleaned: e.is_cleaned.length,
-            guest_name: e?.booked_room?.customer?.full_name || "---",
-            checkin_datetime_only_display:
-              e?.booked_room?.checkin_datetime_only_display,
-            checkout_datetime_only_display:
-              e?.booked_room?.checkout_datetime_only_display,
-          }));
+        // Status totals
+        const [totalDirty, totalOccupied, totalVac, totalBlocked] =
+          await Promise.all([
+            this.getRoomStatus(dirtyRoomsList.map((e) => e.id)),
+            this.getRoomStatus(checkIn.map((e) => e.id)),
+            this.getRoomStatus(vacantRooms.map((e) => e.id)),
+            this.getRoomStatus(blockedRooms.map((e) => e.id)),
+          ]);
 
-          let brs = data.blockedRooms.map((e) => ({
-            id: e.id,
-            room_no: e.room_no,
-            room_type: e.room_type.name,
-            is_cleaned: e.is_cleaned.length,
-            guest_name: e?.booked_room?.customer?.full_name || "---",
-            checkin_datetime_only_display:
-              e?.booked_room?.checkin_datetime_only_display,
-            checkout_datetime_only_display:
-              e?.booked_room?.checkout_datetime_only_display,
-          }));
+        // Assign to component state
+        this.rooms = {
+          DirtyRooms: drs,
+          Occupied: ors,
+          vacantRooms: vrs,
+          blockedRooms: brs,
+        };
 
-          this.rooms = {
-            DirtyRooms: drs,
-            Occupied: ors,
-            vacantRooms: vrs,
-            blockedRooms: brs,
-          };
+        this.cards = [
+          {
+            color: "white",
+            bgColor: "#d9534f",
+            label: "Dirty",
+            value: drs.map(e => e.room_cleaning_status_count).reduce((acc,cur) => acc + cur, 0),
+            sub_value: this.getSubValue(dirty.length, totalDirty),
+          },
+          {
+            color: "black",
+            bgColor: "#ddbc91",
+            label: "Occupied",
+            value: ors.map(e => e.room_cleaning_status_count).reduce((acc,cur) => acc + cur, 0),
+            sub_value: this.getSubValue(occupied.length, totalOccupied),
+          },
+          {
+            color: "black",
+            bgColor: "#f5ece3",
+            label: "Vacant",
+            value: vrs.map(e => e.room_cleaning_status_count).reduce((acc,cur) => acc + cur, 0),
+            sub_value: this.getSubValue(vacantRooms.length, totalVac),
+          },
+          {
+            color: "white",
+            bgColor: "#75a29f",
+            label: "Blocked",
+            value: brs.map(e => e.room_cleaning_status_count).reduce((acc,cur) => acc + cur, 0),
+            sub_value: this.getSubValue(blocked.length, totalBlocked),
+          },
+        ];
 
-          this.cards = [
-            {
-              color: "white",
-              bgColor: "#d9534f",
-              label: "Dirty",
-              value: drs.filter((e) => e.is_cleaned).length,
-              sub_value: this.getSubValue(dirtyRooms.length, totalDirty),
-            },
-            {
-              color: "black",
-              bgColor: "#ddbc91",
-              label: "Occupied",
-              value: ors.filter((e) => e.is_cleaned).length,
-              sub_value: this.getSubValue(Occupied.length, totalOccupied),
-            },
-            {
-              color: "black",
-              bgColor: "#f5ece3",
-              label: "Vacant",
-              value: vrs.filter((e) => e.is_cleaned).length,
-              sub_value: this.getSubValue(vacantRooms.length, totalVac),
-            },
-            {
-              color: "white",
-              bgColor: "#75a29f",
-              label: "Blocked",
-              value: brs.filter((e) => e.is_cleaned).length,
-              sub_value: this.getSubValue(blockedRooms.length, totalBlocked),
-            },
-          ];
-
-          this.progress = {
-            total: allRoomList.length + blockedRooms.length,
-            engaged: this.$utils.getSum(this.cards.map((e) => e.value)),
-          };
-        });
+        this.progress = {
+          total: allRooms.length + blocked.length,
+          engaged: this.$utils.getSum(this.cards.map((e) => e.value)),
+        };
+      } catch (error) {
+        console.error(error);
+        this.alert(
+          "Error!",
+          "Something went wrong while fetching rooms.",
+          "error"
+        );
+      }
     },
     getSubValue(length, total) {
       return length - total < 0 ? "0" : (length - total).toString();

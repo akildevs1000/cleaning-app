@@ -123,6 +123,20 @@
         border-top-left-radius: 15px; /* Apply border radius to match card corners */
         border-top-right-radius: 15px; /* Apply border radius to match card corners */
       }
+
+      .clock-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+      }
+      .clock {
+        font-size: 2rem; /* large font */
+        font-weight: bold;
+        font-family: "Courier New", monospace; /* digital clock feel */
+        padding: 10px 20px;
+        border-radius: 10px;
+      }
     </style>
     <v-card flat class="mx-auto" width="100%">
       <!-- New Header - v-app-bar -->
@@ -301,8 +315,12 @@
             </v-col>
           </v-row>
         </v-card>
-        <div class="mt-5">
+        <div class="mt-5 text-center">
+          <div class="clock-wrapper" v-if="displayTime">
+            <span class="clock">{{ displayTime }}</span>
+          </div>
           <v-btn
+            v-else
             block
             x-large
             dark
@@ -335,6 +353,7 @@
 export default {
   data() {
     return {
+      displayTime: null,
       isDark: false,
       selectedRoom: null,
       isCleaningStarted: false, // New data property to control section visibility
@@ -343,9 +362,10 @@ export default {
       FormData: {
         start_time: "00:00:00",
         end_time: "00:00:00",
-        status: "Dirty",
+        status: "Cleaned",
       },
       attachments: [],
+      timer: null,
     };
   },
   mounted() {
@@ -353,14 +373,18 @@ export default {
     if (data) {
       try {
         this.selectedRoom = JSON.parse(decodeURIComponent(data));
-        console.log("🚀 ~ mounted ~ this.selectedRoom:", this.selectedRoom);
       } catch {
         this.selectedRoom = data;
-        console.log("🚀 ~ mounted ~ this.selectedRoom:", this.selectedRoom);
       }
     }
   },
+  beforeDestroy() {
+    if (this.timer) clearInterval(this.timer);
+  },
   methods: {
+    setStatus(status = "Cleaned") {
+      this.FormData.status = status;
+    },
     handleFileSelection(e, name) {
       this.FormData = {
         ...this.FormData,
@@ -373,21 +397,12 @@ export default {
       };
       this.isInitialState = false;
     },
-
     handleVoiceNote(e, name) {
       this.FormData = {
         ...this.FormData,
         voice_note: e,
         voice_note_name: name,
       };
-    },
-
-    formatTime(date) {
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      const seconds = String(date.getSeconds()).padStart(2, "0");
-
-      return `${hours}:${minutes}:${seconds}`;
     },
     start() {
       if (!this.selectedRoom) {
@@ -397,61 +412,74 @@ export default {
 
       this.isCleaningStarted = true;
 
-      let startTime = this.isInitialState
-        ? this.formatTime(new Date())
-        : this.FormData.start_time;
-      console.log("🚀 ~ start ~ startTime:", startTime);
+      let start_time = this.getStartTime();
 
       this.FormData = {
         ...this.FormData,
-        start_time: startTime,
-        end_time: "00:00:00", // Reset end time when starting
+        start_time: start_time,
+        end_time: "00:00:00",
       };
-      console.log("🚀 ~ start ~ this.FormData:", this.FormData);
 
-      this.isInitialState = false; // Flag that initial state is done
-    },
-    setStatus(status) {
-      this.FormData = {
-        ...this.FormData,
-        start_time: this.isInitialState
-          ? this.formatTime(new Date())
-          : this.FormData.start_time,
-        ...this.selectedRoom,
-        status,
-      };
+      this.startTimer(this.FormData.end_time);
+
+      this.isInitialState = false;
     },
     async stop() {
-
       this.isCleaningStarted = false;
 
-      const now = new Date();
-      const hours = now.getHours().toString().padStart(2, "0");
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-      const seconds = now.getSeconds().toString().padStart(2, "0");
+      let end_time = this.formatTime(new Date());
+      let total_time = this.$utils.calculateTotalTime(
+        this.FormData.start_time,
+        end_time
+      );
 
       this.FormData = {
         ...this.FormData,
-        end_time: `${hours}:${minutes}:${seconds}`,
-
-        total_time: this.$utils.calculateTotalTime(
-          this.FormData.start_time,
-          `${hours}:${minutes}:${seconds}`
-        ),
+        end_time: end_time,
+        total_time: total_time,
         cleaned_by_user_id: this.$auth.user.id,
         company_id: this.$auth.user.company_id,
         room_id: this.selectedRoom.id,
       };
-
-      console.log(this.FormData);
-
-      // return;
 
       await this.$axios.post(`room-cleaning`, this.FormData);
 
       this.isInitialState = true;
 
       this.$router.push("/");
+    },
+
+    getStartTime() {
+      return this.isInitialState
+        ? this.formatTime(new Date())
+        : this.FormData.start_time;
+    },
+    formatTime(date) {
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
+
+      return `${hours}:${minutes}:${seconds}`;
+    },
+    startTimer(initialTime) {
+      let [hours, minutes, seconds] = initialTime.split(":").map(Number);
+
+      // Create Date object for today
+      this.dateObj = new Date();
+      this.dateObj.setHours(hours, minutes, seconds, 0);
+
+      // Clear previous timer if exists
+      if (this.timer) clearInterval(this.timer);
+
+      // Start ticking
+      this.timer = setInterval(() => {
+        this.dateObj.setSeconds(this.dateObj.getSeconds() + 1);
+
+        this.displayTime = this.dateObj.toLocaleTimeString([], {
+          hour12: false,
+        });
+        console.log("🚀 ~ startTimer ~ this.displayTime:", this.displayTime);
+      }, 1000);
     },
   },
 };

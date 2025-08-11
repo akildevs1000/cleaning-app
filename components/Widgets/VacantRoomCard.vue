@@ -34,9 +34,18 @@ export default {
   },
   methods: {
     getRelatedStyle(item) {
-      return item.is_cleaned
-        ? `background-color:#2ce860;color:white;`
-        : `background-color:${this.bgColor};color:${this.color};`;
+      const statusColors = {
+        cleaned: { backgroundColor: "#32ea91", color: "white" },
+        dirty: { backgroundColor: "#e35632", color: "white" },
+        neutral: { backgroundColor: "#fab950", color: "white" },
+        default: { backgroundColor: this.bgColor, color: this.color },
+      };
+
+      if (item.is_cleaned) return statusColors.cleaned;
+      if (item.is_dirty) return statusColors.dirty;
+      if (item.is_neutral) return statusColors.neutral;
+
+      return statusColors.default;
     },
     // selectRoom(index, item) {
     //   this.selectedIndex = index; // Set the selected index
