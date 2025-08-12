@@ -1,5 +1,30 @@
 <template>
   <span class="pt-15">
+    <style>
+      .search-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end; /* icon fixed to the right */
+      }
+      .search-icon {
+        cursor: pointer;
+      }
+
+      .slide-right-enter-active,
+      .slide-right-leave-active {
+        transition: all 0.3s ease;
+      }
+
+      .slide-right-enter {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+
+      .slide-right-leave-to {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+    </style>
     <v-container>
       <v-row>
         <v-col>
@@ -12,10 +37,41 @@
           </div>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col cols="12">
+          <div class="search-wrapper">
+            <transition name="slide-right">
+             
+              <v-autocomplete
+                v-show="showSearch"
+                label="Room Type"
+                outlined
+                dense
+                hide-details
+                item-value="name"
+                item-text="name"
+                v-model="room_type"
+                :items="[{ name: 'Select All' }, ...roomTypes]"
+                @change="dialog = false"
+                class="search-input"
+              ></v-autocomplete>
+            </transition>
+
+            <v-icon
+              color="primary"
+              @click="showSearch = !showSearch"
+              class="search-icon ml-1"
+            >
+              mdi-magnify
+            </v-icon>
+          </div>
+        </v-col>
+      </v-row>
       <v-row class="mt-5 mb-1">
         <!-- <v-col cols="12" class="text-right">
         <v-icon color="black" @click="room_list">mdi-reload</v-icon>
       </v-col> -->
+
         <v-col v-for="(item, index) in cards" :key="index">
           <v-card
             elevation="0"
@@ -42,24 +98,28 @@
               color="white"
               v-if="tabId == 0"
               :items="rooms.DirtyRooms"
+              :room_type="room_type"
             />
             <WidgetsVacantRoomCard
               bgColor="#ddbc91"
               color="black"
               v-if="tabId == 1"
               :items="rooms.Occupied"
+              :room_type="room_type"
             />
             <WidgetsVacantRoomCard
               bgColor="#f5ece3"
               color="black"
               v-if="tabId == 2"
               :items="rooms.vacantRooms"
+              :room_type="room_type"
             />
             <WidgetsVacantRoomCard
               bgColor="#75a29f"
               color="white"
               v-if="tabId == 3"
               :items="rooms.blockedRooms"
+              :room_type="room_type"
             />
           </div>
         </v-col>
@@ -71,17 +131,32 @@
 export default {
   data() {
     return {
+      showSearch: false,
       tabId: 2,
       cards: [],
       rooms: [],
       progress: null,
+      roomTypes: [],
+      room_type: null,
     };
   },
   created() {
     this.room_list();
+    this.get_room_types();
   },
 
   methods: {
+    get_room_types() {
+      this.$axios
+        .get(`room_type`, {
+          params: {
+            company_id: this.$auth.user.company.id,
+          },
+        })
+        .then(({ data }) => {
+          this.roomTypes = data;
+        });
+    },
     setTabId(index) {
       this.tabId = index;
     },
