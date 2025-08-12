@@ -148,15 +148,12 @@ export default {
         });
 
         this.mediaRecorder.addEventListener("stop", async () => {
-          clearInterval(this.recordingTimer); // stop timer when recording stops
-
-          const mimeType = this.audioChunks[0]?.type || "audio/webm";
-          this.recordedBlob = new Blob(this.audioChunks, { type: mimeType });
+          clearInterval(this.recordingTimer);
+          this.recordedBlob = new Blob(this.audioChunks, {
+            type: "audio/mpeg",
+          }); // back to old type
           this.audioUrl = URL.createObjectURL(this.recordedBlob);
-
           this.$emit("voice-note", await this.blobToBase64(this.recordedBlob));
-
-          console.log("Recording duration (seconds):", this.recordingDuration);
         });
       } catch (error) {
         console.error("Error accessing the microphone", error);
