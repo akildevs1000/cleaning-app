@@ -1,13 +1,13 @@
 <template>
-  <div style="max-height: 300px; overflow-y: scroll" class="mt-5 mb-10">
+  <div class="mt-5 mb-10">
     <v-row no-gutters v-if="items && items.length > 0">
-      <v-col cols="2" v-for="(item, index) in items" :key="index">
+      <v-col cols="4" v-for="(item, index) in items" :key="index">
         <div class="ma-1 text-center" style="border-radius: 12px">
           <v-card
             rounded
             elevation="0"
             dark
-            class="pa-2 mx-auto"
+            class="pa-3"
             :style="getRelatedStyle(item)"
             :class="selectedIndex === index ? 'blue white--text' : ''"
             @click="selectRoom(index, item)"
