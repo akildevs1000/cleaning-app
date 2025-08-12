@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="dialog" height="300" width="300">
-    <AssetsIconClose left="290" @click="dialog = false" />
+    <WidgetsClose left="290" @click="dialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"
         ><v-img 

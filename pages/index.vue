@@ -29,7 +29,7 @@
       <v-row>
         <v-col>
           <div>
-            <AssetsProgressCustom
+            <WidgetsProgressCustom
               v-if="progress"
               :total="progress.total"
               :engaged="progress.engaged"

@@ -107,7 +107,7 @@
       </v-container>
     </v-main>
 
-    <v-footer fixed app dense flat class="white pb-5">
+    <!-- <v-footer fixed app dense flat class="white pb-5">
       <v-row align="center" no-gutters>
         <v-col cols="12" class="mb-1">
           <v-divider></v-divider>
@@ -118,14 +118,14 @@
         <v-col class="text-center">
           <v-icon color="#b8afaa" @click="goto(`/rooms`)">mdi-bed</v-icon>
         </v-col>
-        <!-- <v-col class="text-center">
+        <v-col class="text-center">
           <v-icon color="#cfbeb4">mdi-cash-multiple</v-icon>
         </v-col>
         <v-col class="text-center">
           <v-icon color="#b1b6ba">mdi-chart-areaspline</v-icon>
-        </v-col> -->
+        </v-col>
       </v-row>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 

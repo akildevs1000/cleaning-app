@@ -3,45 +3,61 @@
     <style>
       /* Apply body background directly to v-app to ensure it's not overridden */
       .v-application {
-        background-color: #e8ebf0 !important; /* Changed to a slightly darker light grey for more prominence */
+        background-color: #e8ebf0 !important;
+        /* Changed to a slightly darker light grey for more prominence */
       }
 
       /* Ensure the primary color is applied directly to the button component */
       .v-btn.v-btn--has-bg.primary {
-        background-color: #26a69a !important; /* Specific button background color */
-        border-color: #26a69a !important; /* Specific button border color */
+        background-color: #26a69a !important;
+        /* Specific button background color */
+        border-color: #26a69a !important;
+        /* Specific button border color */
       }
 
       /* Style for the individual information rows (cards) with white background */
       .info-item-card {
-        background-color: white; /* Card background is white */
-        border-radius: 12px; /* Rounded corners for the info rows */
-        margin-bottom: 12px; /* Spacing between info rows */
-        padding: 12px 16px; /* Padding inside the info rows */
+        background-color: white;
+        /* Card background is white */
+        border-radius: 12px;
+        /* Rounded corners for the info rows */
+        margin-bottom: 12px;
+        /* Spacing between info rows */
+        padding: 12px 16px;
+        /* Padding inside the info rows */
         display: flex;
         align-items: center;
-        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow for individual info cards */
+        box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+        /* Subtle shadow for individual info cards */
       }
 
       /* Remove generic icon color CSS as colors are now applied via props */
       .info-item-card .v-list-item__icon .v-icon,
       .info-item-card .v-icon {
-        margin-right: 16px; /* Space between icon and text */
+        margin-right: 16px;
+        /* Space between icon and text */
         /* color is now set by individual v-icon color prop */
       }
 
       .info-item-card .info-text-container {
         flex-grow: 1;
       }
+
       .info-item-card .info-label {
-        font-size: 0.75rem; /* Smaller font for labels (e.g., "Number", "Guest Name") */
-        color: rgba(0, 0, 0, 0.6); /* Lighter color for labels */
+        font-size: 0.75rem;
+        /* Smaller font for labels (e.g., "Number", "Guest Name") */
+        color: rgba(0, 0, 0, 0.6);
+        /* Lighter color for labels */
         line-height: 1;
       }
+
       .info-item-card .info-value {
-        font-size: 1rem; /* Standard font size for values (e.g., "305", "John Doe") */
-        font-weight: 500; /* Medium font weight for values */
-        color: rgba(0, 0, 0, 0.87); /* Darker color for values */
+        font-size: 1rem;
+        /* Standard font size for values (e.g., "305", "John Doe") */
+        font-weight: 500;
+        /* Medium font weight for values */
+        color: rgba(0, 0, 0, 0.87);
+        /* Darker color for values */
         line-height: 1.5;
       }
 
@@ -53,91 +69,141 @@
 
       /* Enforce mobile-like width for the main content card */
       .v-card {
-        width: 100%; /* Ensures the card takes full width up to max-width */
-        max-width: 400px; /* Constrains the max width to simulate a mobile device */
+        width: 100%;
+        /* Ensures the card takes full width up to max-width */
+        max-width: 400px;
+        /* Constrains the max width to simulate a mobile device */
         margin-left: auto;
         margin-right: auto;
         box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
           0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-          0px 1px 5px 0px rgba(0, 0, 0, 0.12); /* Add subtle shadow */
-        background-color: white !important; /* Main card background is white */
-        border-radius: 15px !important; /* Applied border-radius 15px as requested */
+          0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+        /* Add subtle shadow */
+        background-color: white !important;
+        /* Main card background is white */
+        border-radius: 15px !important;
+        /* Applied border-radius 15px as requested */
       }
 
       /* Style for the app bar to make it prominent */
       .v-app-bar.v-toolbar {
-        background-color: #ffffff !important; /* White background for the app bar */
+        background-color: #ffffff !important;
+        /* White background for the app bar */
         box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
           0px 4px 5px 0px rgba(0, 0, 0, 0.14),
-          0px 1px 10px 0px rgba(0, 0, 0, 0.12) !important; /* More pronounced shadow */
-        border-radius: 15px 15px 0 0 !important; /* Match top border radius of the card */
+          0px 1px 10px 0px rgba(0, 0, 0, 0.12) !important;
+        /* More pronounced shadow */
+        border-radius: 15px 15px 0 0 !important;
+        /* Match top border radius of the card */
       }
 
       .v-app-bar .v-toolbar__title {
-        font-size: 1.5rem !important; /* Larger font size for the header title */
-        font-weight: 600 !important; /* Bolder title */
-        color: #333333 !important; /* Darker color for the title */
+        font-size: 1.5rem !important;
+        /* Larger font size for the header title */
+        font-weight: 600 !important;
+        /* Bolder title */
+        color: #333333 !important;
+        /* Darker color for the title */
       }
 
       /* Styling for the new cleaning actions section */
       .cleaning-actions-card {
         padding: 24px;
-        padding-bottom: 90px; /* Add padding at the bottom to make space for the fixed button */
+        padding-bottom: 90px;
+        /* Add padding at the bottom to make space for the fixed button */
       }
+
       .cleaning-actions-card .v-btn {
-        margin-bottom: 12px; /* Add spacing between buttons */
+        margin-bottom: 12px;
+        /* Add spacing between buttons */
       }
+
       .cleaning-actions-card .v-file-input {
-        margin-bottom: 24px; /* More space below file input */
+        margin-bottom: 24px;
+        /* More space below file input */
       }
 
       /* Custom style for big icons on buttons */
       .v-btn .v-icon.v-icon--left {
-        font-size: 36px !important; /* Increase icon size for buttons */
+        font-size: 36px !important;
+        /* Increase icon size for buttons */
       }
 
       /* Styles for the v-file-input to make its icon big and match height */
       .v-file-input .v-input__prepend-outer .v-icon {
-        font-size: 36px !important; /* Make file input icon big */
+        font-size: 36px !important;
+        /* Make file input icon big */
       }
 
       /* Adjust the height and alignment of the file input control */
       .v-file-input .v-input__control {
-        min-height: 56px !important; /* Match x-large button height */
+        min-height: 56px !important;
+        /* Match x-large button height */
       }
+
       /* Adjust vertical alignment for the prepend icon in the file input */
       .v-file-input .v-input__prepend-outer {
-        margin-top: 8px !important; /* Adjust vertical alignment for consistency */
+        margin-top: 8px !important;
+        /* Adjust vertical alignment for consistency */
       }
 
       /* Styles for the fixed "Stop Cleaning" button container */
       .fixed-bottom-button-container {
         position: fixed;
         bottom: 0;
-        left: 50%; /* Center horizontally */
-        transform: translateX(-50%); /* Adjust for perfect centering */
+        left: 50%;
+        /* Center horizontally */
+        transform: translateX(-50%);
+        /* Adjust for perfect centering */
         width: 100%;
-        max-width: 400px; /* Match the max-width of the main card */
-        padding: 16px 24px; /* Add padding around the button */
-        z-index: 10; /* Ensure it stays on top */
-        border-top-left-radius: 15px; /* Apply border radius to match card corners */
-        border-top-right-radius: 15px; /* Apply border radius to match card corners */
-      }
-
-      .clock-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100px;
-      }
-      .clock {
-        font-size: 2rem; /* large font */
-        font-weight: bold;
-        font-family: "Courier New", monospace; /* digital clock feel */
-        padding: 10px 20px;
-        border-radius: 10px;
+        max-width: 400px;
+        /* Match the max-width of the main card */
+        padding: 16px 24px;
+        /* Add padding around the button */
+        z-index: 10;
+        /* Ensure it stays on top */
+        border-top-left-radius: 15px;
+        /* Apply border radius to match card corners */
+        border-top-right-radius: 15px;
+        /* Apply border radius to match card corners */
       }
     </style>
+    <v-row>
+      <v-col cols="12">
+        <div class="text-center">
+          <div >
+            <v-card style="background:none !important;" flat>
+              <v-card-text>
+                <div v-if="displayTime" class="body-1 mb-4">{{ displayTime }}</div>
+
+                <v-btn
+                  v-if="!displayTime"
+                  block
+                  dark
+                  class="rounded-pill pa-5"
+                  color="primary"
+                  @click="start"
+                >
+                  <v-icon left>mdi-play</v-icon>
+                  START CLEANING
+                </v-btn>
+                <v-btn
+                  block
+                  v-else
+                  dark
+                  color="error"
+                  class="rounded-pill pa-5"
+                  @click="stop"
+                >
+                  <v-icon left>mdi-stop-circle-outline</v-icon>
+                  Stop Cleaning
+                </v-btn>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
     <v-card flat class="mx-auto" width="100%">
       <!-- New Header - v-app-bar -->
 
@@ -207,7 +273,9 @@
           <!-- Green -->
           <div class="info-text-container">
             <div class="info-label">Last Cleaned</div>
-            <div class="info-value">{{selectedRoom?.last_cleaned_at || "Not Available" }}</div>
+            <div class="info-value">
+              {{ selectedRoom?.last_cleaned_at || "Not Available" }}
+            </div>
           </div>
         </div>
       </v-card-text>
@@ -267,15 +335,13 @@
               Take Photo or Record Voice
             </v-col>
             <v-col cols="12">
-                <WidgetsUploadAttachment
-                  validationMessage="Room not found"
-                  :rule="selectedRoom"
-                  :displayPreview="false"
-                  :label="`${selectedRoom?.room_no}_${Date.now()}.png`"
-                  @files-selected="handleFileSelection"
-                />
-               
-             
+              <WidgetsUploadAttachment
+                validationMessage="Room not found"
+                :rule="selectedRoom"
+                :displayPreview="false"
+                :label="`${selectedRoom?.room_no}_${Date.now()}.png`"
+                @files-selected="handleFileSelection"
+              />
             </v-col>
             <v-col cols="12">
               <WidgetsVoice
@@ -289,36 +355,6 @@
             </v-col>
           </v-row>
         </v-card>
-        <div class="mt-5 text-center">
-          <div class="clock-wrapper" v-if="displayTime">
-            <span class="clock">{{ displayTime }}</span>
-          </div>
-          <v-btn
-            v-else
-            block
-            x-large
-            dark
-            class="rounded-pill"
-            color="primary"
-            @click="start"
-          >
-            <v-icon left>mdi-play</v-icon>
-            START CLEANING
-          </v-btn>
-        </div>
-        <div>
-          <v-btn
-            block
-            x-large
-            dark
-            color="error"
-            class="rounded-pill"
-            @click="stop"
-          >
-            <v-icon left>mdi-stop-circle-outline</v-icon>
-            Stop Cleaning
-          </v-btn>
-        </div>
       </v-card-text>
     </v-card>
   </span>
