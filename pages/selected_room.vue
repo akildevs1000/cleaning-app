@@ -167,48 +167,25 @@
         border-top-right-radius: 15px;
         /* Apply border radius to match card corners */
       }
-    </style>
-    <v-row>
-      <v-col cols="12">
-        <div class="text-center">
-          <div >
-            <v-card style="background:none !important;" flat>
-              <v-card-text>
-                <div v-if="displayTime" class="body-1 mb-4">{{ displayTime }}</div>
+      @keyframes flickerGlow {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
 
-                <v-btn
-                  v-if="!displayTime"
-                  block
-                  dark
-                  class="rounded-pill pa-5"
-                  color="primary"
-                  @click="start"
-                >
-                  <v-icon left>mdi-play</v-icon>
-                  START CLEANING
-                </v-btn>
-                <v-btn
-                  block
-                  v-else
-                  dark
-                  color="error"
-                  class="rounded-pill pa-5"
-                  @click="stop"
-                >
-                  <v-icon left>mdi-stop-circle-outline</v-icon>
-                  Stop Cleaning
-                </v-btn>
-              </v-card-text>
-            </v-card>
-          </div>
-        </div>
-      </v-col>
-    </v-row>
+      .flicker-btn {
+        animation: flickerGlow 1.2s infinite ease-in-out;
+      }
+    </style>
     <v-card flat class="mx-auto" width="100%">
       <!-- New Header - v-app-bar -->
 
       <!-- Guest Information Section (visible when not cleaning) -->
-      <v-card-text class="pa-6">
+      <v-card-text v-if="!displayTime" class="pa-6">
         <h2 class="text-h6 font-weight-medium mb-4">Guest Information</h2>
 
         <!-- Room Number -->
@@ -278,18 +255,33 @@
             </div>
           </div>
         </div>
+
+        <v-row>
+          <v-col cols="12 pt-10">
+            <v-btn
+              block
+              dark
+              class="rounded-pill pa-5 flicker-btn"
+              color="primary"
+              @click="start"
+            >
+              <v-icon left>mdi-play</v-icon>
+              START CLEANING
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card-text>
 
       <!-- New Section for Cleaning Actions (visible when cleaning) -->
-      <v-card-text class="pa-6 cleaning-actions-card">
+      <v-card-text v-else class="pa-6 cleaning-actions-card">
         <v-card
           class="pa-4 mb-6"
+          :style="
+            error ? 'border: 1px solid #f96363; border-radius: 12px;' : ''
+          "
           rounded="lg"
           flat
           outlined
-          :color="isDark ? darkColors.card : ''"
-          :dark="isDark"
-          :light="!isDark"
         >
           <v-row dense justify="space-around">
             <v-col>
@@ -300,16 +292,16 @@
                 >
                   Give feedback
                 </div>
-                <v-btn-toggle rounded color="primary">
-                  <v-btn value="sad" x-large @click="setStatus('Dirty')">
+                <v-btn-toggle v-model="FormData.status" rounded outlined>
+                  <v-btn dense x-large value="Dirty">
                     <v-icon x-large color="error">mdi-emoticon-sad</v-icon>
                   </v-btn>
-                  <v-btn value="neutral" x-large @click="setStatus('Neutral')">
+                  <v-btn dense x-large value="Neutral">
                     <v-icon x-large color="yellow darken-3"
                       >mdi-emoticon-neutral</v-icon
                     >
                   </v-btn>
-                  <v-btn value="happy" x-large @click="setStatus('Cleaned')">
+                  <v-btn dense x-large value="Cleaned">
                     <v-icon x-large color="success">mdi-emoticon-happy</v-icon>
                   </v-btn>
                 </v-btn-toggle>
@@ -355,6 +347,29 @@
             </v-col>
           </v-row>
         </v-card>
+
+        <v-btn
+          v-if="displayTime"
+          block
+          dark
+          color="error"
+          class="rounded-pill pa-5 flicker-btn mt-10"
+          @click="stop"
+        >
+          <v-icon left>mdi-stop-circle-outline</v-icon>
+          Stop Cleaning
+        </v-btn>
+
+        <!-- <v-btn
+          v-if="!isCleaningStarted"
+          block
+          dark
+          color="blue"
+          class="rounded-pill pa-5 mt-10"
+          @click="submit"
+        >
+          Save
+        </v-btn> -->
       </v-card-text>
     </v-card>
   </span>
@@ -363,6 +378,7 @@
 export default {
   data() {
     return {
+      error: false,
       displayTime: null,
       isDark: false,
       selectedRoom: null,
@@ -372,7 +388,7 @@ export default {
       FormData: {
         start_time: "00:00:00",
         end_time: "00:00:00",
-        status: "Cleaned",
+        status: null,
       },
       attachments: [],
       timer: null,
@@ -392,9 +408,6 @@ export default {
     if (this.timer) clearInterval(this.timer);
   },
   methods: {
-    setStatus(status = "Cleaned") {
-      this.FormData.status = status;
-    },
     handleFileSelection(e) {
       this.FormData = {
         ...this.FormData,
@@ -414,11 +427,6 @@ export default {
       };
     },
     start() {
-      if (!this.selectedRoom) {
-        alert(`Room not Selected`);
-        return;
-      }
-
       this.isCleaningStarted = true;
 
       let start_time = this.getStartTime();
@@ -451,7 +459,15 @@ export default {
         room_id: this.selectedRoom.id,
       };
 
-      await this.$axios.post(`room-cleaning`, this.FormData);
+      this.submit(this.FormData)
+    },
+
+    async submit(FormData) {
+      this.error = !FormData.status;
+
+      if (this.error) return;
+
+      await this.$axios.post(`room-cleaning`, FormData);
 
       this.isInitialState = true;
 
