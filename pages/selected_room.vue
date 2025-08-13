@@ -293,15 +293,15 @@
                   Give feedback
                 </div>
                 <v-btn-toggle v-model="FormData.status" rounded outlined>
-                  <v-btn dense x-large value="Dirty">
+                  <v-btn dense x-large value="Dirty" @click="error = false">
                     <v-icon x-large color="error">mdi-emoticon-sad</v-icon>
                   </v-btn>
-                  <v-btn dense x-large value="Neutral">
+                  <v-btn dense x-large value="Neutral" @click="error = false">
                     <v-icon x-large color="yellow darken-3"
                       >mdi-emoticon-neutral</v-icon
                     >
                   </v-btn>
-                  <v-btn dense x-large value="Cleaned">
+                  <v-btn dense x-large value="Cleaned" @click="error = false">
                     <v-icon x-large color="success">mdi-emoticon-happy</v-icon>
                   </v-btn>
                 </v-btn-toggle>
