@@ -69,15 +69,7 @@ export default {
     {
       src: "~/plugins/axios.js",
     },
-    {
-      src: "~/plugins/TiptapVuetify",
-      mode: "client",
-    },
-    {
-      src: "~/plugins/vue-apexchart.js",
-      // ssr: false,
-      mode: "client",
-    },
+  
 
     "~/plugins/qrcode.js",
     "~/plugins/custom-methods.js",
