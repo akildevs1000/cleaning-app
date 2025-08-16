@@ -28,11 +28,11 @@
       outlined
       rounded
       color="primary"
-      @mousedown="startRecording"
-      @mouseup="stopRecording"
-      @mouseleave="stopRecording"
-      @touchstart.prevent="startRecording"
-      @touchend="stopRecording"
+      @mousedown.native="startRecording"
+      @mouseup.native="stopRecording"
+      @mouseleave.native="stopRecording"
+      @touchstart.native.prevent="startRecording"
+      @touchend.native="stopRecording"
     >
       <v-icon large color="primary">mdi-microphone-outline</v-icon>
       Voice
