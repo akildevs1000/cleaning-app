@@ -402,6 +402,7 @@ export default {
       },
       attachments: [],
       timer: null,
+      lastInsertedRecord: null,
     };
   },
   mounted() {
@@ -436,7 +437,7 @@ export default {
         voice_note_name: name,
       };
     },
-    start() {
+    async start() {
       this.isCleaningStarted = true;
 
       let start_time = this.getStartTime();
@@ -444,12 +445,22 @@ export default {
       this.FormData = {
         ...this.FormData,
         start_time: start_time,
+        room_id: this.selectedRoom.id,
         end_time: "00:00:00",
+        cleaned_by_user_id: this.$auth.user.id,
+        company_id: this.$auth.user.company_id,
       };
 
       this.startTimer(this.FormData.end_time);
 
       this.isInitialState = false;
+
+      let { data } = await this.$axios.post(
+        `room-cleaning-start`,
+        this.FormData
+      );
+
+      this.lastInsertedRecord = data.record;
     },
     async stop() {
       this.isCleaningStarted = false;
@@ -467,6 +478,7 @@ export default {
         cleaned_by_user_id: this.$auth.user.id,
         company_id: this.$auth.user.company_id,
         room_id: this.selectedRoom.id,
+        id: this.lastInsertedRecord.id
       };
 
       this.submit(this.FormData);
@@ -508,13 +520,11 @@ export default {
         );
 
         if (!data.status) {
-          console.error(
-            data.message || "Failed to set room as available."
-          );
+          console.error(data.message || "Failed to set room as available.");
           return;
         }
 
-       this.$router.push("/");
+        this.$router.push("/");
         // Optionally: refresh rooms list or navigate if needed
         // this.fetchRooms?.();
       } catch (error) {

@@ -252,9 +252,7 @@ export default {
         const uniqueRoomNumbers = [
           ...new Set([...sold, ...expectCO, ...occupied, ...blocked, ...dirty]),
         ];
-        const vacantRooms = allRooms.filter(
-          (e) => !uniqueRoomNumbers.includes(e.room_no)
-        );
+        const vacantRooms = allRooms;
 
         // Helper: Common room mapping
         const mapRoomData = (list, extra = {}) =>
@@ -329,28 +327,28 @@ export default {
             bgColor: "#d9534f",
             label: "Dirty",
             value: drs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
-            sub_value: this.getSubValue(dirty.length, totalDirty),
+            sub_value: drs.length,
           },
           {
             color: "black",
             bgColor: "#ddbc91",
             label: "Occupied",
             value: ors.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
-            sub_value: this.getSubValue(occupied.length, totalOccupied),
+            sub_value: ors.length,
           },
           {
             color: "black",
             bgColor: "#f5ece3",
             label: "Vacant",
             value: vrs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
-            sub_value: this.getSubValue(vacantRooms.length, totalVac),
+            sub_value: vrs.length,
           },
           {
             color: "white",
             bgColor: "#75a29f",
             label: "Blocked",
             value: brs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
-            sub_value: this.getSubValue(blocked.length, totalBlocked),
+            sub_value: brs.length,
           },
         ];
 
