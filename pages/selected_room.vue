@@ -276,11 +276,7 @@
       <v-card-text v-else class="pa-6 cleaning-actions-card">
         <v-row v-if="displayTime" justify="center" class="pb-5">
           <v-col cols="12" class="text-center">
-            <v-card
-              class="pa-3 d-inline-block"
-              elevation="2"
-              rounded="lg"
-            >
+            <v-card class="pa-3 d-inline-block" elevation="2" rounded="lg">
               <span class="text-h6 font-weight-bold blue--text">
                 {{ displayTime }}
               </span>
@@ -485,9 +481,46 @@ export default {
 
       this.isInitialState = true;
 
-      this.$router.push("/");
+      this.setAvailable();
     },
 
+    async setAvailable() {
+      const selectedRoom = this.selectedRoom;
+
+      // Validate room selection
+      if (!selectedRoom?.booked_room_id || !selectedRoom?.booking_id) {
+        console.log("Skipping room as available...");
+        this.$router.push("/");
+        return;
+      }
+
+      try {
+        console.log("Setting room as available...");
+
+        const payload = {
+          cancel_by: this.$auth.user.id,
+          bookedRoomId: selectedRoom.booked_room_id, // use consistent naming
+        };
+
+        const { data } = await this.$axios.post(
+          `/set_available/${selectedRoom.booking_id}`,
+          payload
+        );
+
+        if (!data.status) {
+          console.error(
+            data.message || "Failed to set room as available."
+          );
+          return;
+        }
+
+       this.$router.push("/");
+        // Optionally: refresh rooms list or navigate if needed
+        // this.fetchRooms?.();
+      } catch (error) {
+        console.error("Error in setAvailable:", error);
+      }
+    },
     getStartTime() {
       return this.isInitialState
         ? this.formatTime(new Date())
@@ -517,7 +550,6 @@ export default {
         this.displayTime = this.dateObj.toLocaleTimeString([], {
           hour12: false,
         });
-        console.log("🚀 ~ startTimer ~ this.displayTime:", this.displayTime);
       }, 1000);
     },
   },

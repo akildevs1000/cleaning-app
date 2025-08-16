@@ -279,6 +279,8 @@ export default {
               e.is_dirty?.[0]?.last_cleaned_at ??
               "",
             last_cleaned: e.last_cleaned,
+            booked_room_id:e?.booked_room?.id,
+            booking_id:e?.booked_room?.booking_id,
           }));
 
         // Room category arrays
