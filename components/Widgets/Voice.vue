@@ -23,12 +23,16 @@
     </style>
     <v-btn
       v-if="!isRecording"
-      @click="startRecording"
       class="pa-6"
       block
       outlined
       rounded
       color="primary"
+      @mousedown="startRecording"
+      @mouseup="stopRecording"
+      @mouseleave="stopRecording"
+      @touchstart.prevent="startRecording"
+      @touchend="stopRecording"
     >
       <v-icon large color="primary">mdi-microphone-outline</v-icon>
       Voice
@@ -60,7 +64,6 @@
       color="primary"
       v-if="recordedBlob"
     >
-      <!-- WhatsApp style player -->
       <v-icon large @click.stop="togglePlay" color="success">
         {{ isPlaying ? "mdi-pause" : "mdi-play" }}
       </v-icon>
@@ -76,7 +79,6 @@
       <span style="min-width: 40px">{{ formatTime(currentTime) }}</span>
       <v-icon @click="recordedBlob = null"> mdi-close </v-icon>
 
-      <!-- hidden audio -->
       <audio
         controls
         ref="customAudioPlayer"
@@ -85,14 +87,6 @@
         @ended="isPlaying = false"
         style="display: none"
       ></audio>
-
-      <!-- here i want to new code also dont change my existing -->
-      <!-- <audio
-        style="width: 100%; height: 30px"
-        ref="audioPlayer"
-        :src="audioUrl"
-        controls
-      ></audio> -->
     </v-btn>
   </span>
 </template>

@@ -1,35 +1,35 @@
 <template>
-  <div class="mt-5 mb-10">
-    
+  <div style="max-height: 500px; overflow: scroll">
     <v-row no-gutters v-if="filteredItems && filteredItems.length > 0">
       <v-col cols="4" v-for="(item, index) in filteredItems" :key="index">
+        <!-- <pre>{{ item.room_status }}</pre> -->
         <div class="ma-1 text-center" style="border-radius: 12px">
-          <v-card
-            rounded
-            elevation="0"
-            dark
-            class="pa-3"
-            :style="getRelatedStyle(item)"
-            :class="selectedIndex === index ? 'blue white--text' : ''"
-            @click="selectRoom(index, item)"
-          >
-            <span>{{
-              item.room_no.length < 5 ? item.room_no : item.room_no.slice(0, 5)
-            }}</span>
+          <v-card rounded elevation="0" dark class="pa-3" :style="getRelatedStyle(item)"
+            :class="selectedIndex === index ? 'blue white--text' : ''" @click="selectRoom(index, item)">
+            <v-avatar size="40">
+              <v-icon :color="getRelatedIconColor(item)">
+                {{ getRelatedIcon(item) }}
+              </v-icon>
+            </v-avatar>
             <br />
-            <span>{{ item.room_type }}</span>
+            <span class="mt-1">{{
+              item.room_no.length < 5 ? item.room_no : item.room_no.slice(0, 5) }} </span>
+
+                <span>{{ item.room_type }} </span>
           </v-card>
         </div>
       </v-col>
     </v-row>
 
-    <div v-else>No rooms found.</div>
+    <div v-else
+      style="display: flex; justify-content: center; align-items: center; height: 400px; margin-top: 20px; font-size: 16px; font-family: sans-serif;">
+      No rooms found.</div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["items", "bgColor", "color","room_type"],
+  props: ["items", "bgColor", "color", "room_type", "floor_no"],
   data() {
     return {
       selectedIndex: null, // State to keep track of the selected index
@@ -37,37 +37,86 @@ export default {
   },
   computed: {
     filteredItems() {
-      const searchTerm = this.room_type ? this.room_type.trim().toLowerCase() : "";
-      if (!searchTerm || searchTerm == "select all") {
-        return this.items || [];
+      const floor_no = this.floor_no;
+
+      if (!floor_no) {
+        return this.items;
       }
 
-      return (this.items || []).filter(({ room_no, room_type }) => {
-        const roomNo = room_no?.toString().toLowerCase() || "";
-        const roomType = room_type?.toString().toLowerCase() || "";
-        return roomNo.includes(searchTerm) || roomType.includes(searchTerm);
-      });
+      let items = this.items || [];
+
+      items.sort((a, b) => Number(a.room_no) - Number(b.room_no));
+
+
+      return items.filter((e) => e.floor_no == floor_no);
     },
   },
   methods: {
-    getRelatedStyle(item) {
-      const statusColors = {
-        cleaned: { backgroundColor: "#32ea91", color: "white" },
-        dirty: { backgroundColor: "#e35632", color: "white" },
-        neutral: { backgroundColor: "#fab950", color: "white" },
-        default: { backgroundColor: this.bgColor, color: this.color },
-      };
-
-      if (item.is_cleaned) return statusColors.cleaned;
-      if (item.is_dirty) return statusColors.dirty;
-      if (item.is_neutral) return statusColors.neutral;
-
-      return statusColors.default;
+    getRelatedStyle({ backgroundColor, color }) {
+      return { backgroundColor, color };
     },
-    // selectRoom(index, item) {
-    //   this.selectedIndex = index; // Set the selected index
-    //   this.$emit("selectedRoom", item); // Emit the event
-    // },
+    getRelatedIcon(item) {
+      let status = item?.last_cleaned?.status;
+
+      if (status == "Neutral") {
+        return "mdi-emoticon-neutral";
+      } else if (status == "Dirty") {
+        return "mdi-emoticon-sad";
+      } else if (status == "Cleaned") {
+        return "mdi-emoticon-happy";
+      } else {
+        return "mdi-emoticon-neutral";
+      }
+    },
+
+    getRelatedIconColor(item) {
+      let status = item?.last_cleaned?.status;
+      if (item.room_status == "checked_out") {
+        if (status == "Neutral") {
+          return "yellow darken-1";
+        } else if (status == "Dirty") {
+          return "error";
+        } else if (status == "Cleaned") {
+          return "success darken-2";
+        } else {
+          return "grey";
+        }
+      }
+
+      if (item.room_status == "checked_in") {
+        if (status == "Neutral") {
+          return "yellow darken-7";
+        } else if (status == "Dirty") {
+          return "error";
+        } else if (status == "Cleaned") {
+          return "success darken-3";
+        } else {
+          return "white";
+        }
+      }
+      if (item.room_status == "blocked") {
+        if (status == "Neutral") {
+          return "yellow darken-7";
+        } else if (status == "Dirty") {
+          return "error";
+        } else if (status == "Cleaned") {
+          return "success";
+        } else {
+          return "white";
+        }
+      }
+      if (item.room_status == "available") {
+        if (status == "Neutral") {
+          return "yellow darken-3";
+        } else if (status == "Dirty") {
+          return "error";
+        } else if (status == "Cleaned") {
+          return "success";
+        } else {
+          return "grey";
+        }
+      }
+    },
 
     selectRoom(index, item) {
       this.selectedIndex = index;

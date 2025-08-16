@@ -40,8 +40,7 @@
       <v-row>
         <v-col cols="12">
           <div class="search-wrapper">
-            <transition name="slide-right">
-             
+            <!-- <transition name="slide-right">
               <v-autocomplete
                 v-show="showSearch"
                 label="Room Type"
@@ -63,7 +62,19 @@
               class="search-icon ml-1"
             >
               mdi-magnify
-            </v-icon>
+            </v-icon> -->
+
+            <v-autocomplete
+              label="Floor No"
+              v-model="floor_no"
+              outlined
+              dense
+              small
+              hide-details
+              :items="floors"
+              item-text="name"
+              item-value="id"
+            ></v-autocomplete>
           </div>
         </v-col>
       </v-row>
@@ -78,7 +89,6 @@
             height="70"
             class="text-center pt-2"
             :style="`background-color:${item.bgColor}; color:${item.color}; border-radius: 12px`"
-            @click="setTabId(index)"
           >
             <small class="px-1" style="font-size: 12px">{{ item.label }}</small>
             <div class="pa-1 mt-1" style="font-size: 14px">
@@ -92,13 +102,14 @@
       </v-row>
       <v-row no-gutters>
         <v-col cols="12">
-          <div>
+          <div v-if="tabId">
             <WidgetsVacantRoomCard
               bgColor="#d9534f"
               color="white"
               v-if="tabId == 0"
               :items="rooms.DirtyRooms"
               :room_type="room_type"
+              room_status="checked_out"
             />
             <WidgetsVacantRoomCard
               bgColor="#ddbc91"
@@ -106,6 +117,7 @@
               v-if="tabId == 1"
               :items="rooms.Occupied"
               :room_type="room_type"
+              room_status="checked_in"
             />
             <WidgetsVacantRoomCard
               bgColor="#f5ece3"
@@ -113,6 +125,7 @@
               v-if="tabId == 2"
               :items="rooms.vacantRooms"
               :room_type="room_type"
+              room_status="available"
             />
             <WidgetsVacantRoomCard
               bgColor="#75a29f"
@@ -120,6 +133,18 @@
               v-if="tabId == 3"
               :items="rooms.blockedRooms"
               :room_type="room_type"
+              room_status="blocked"
+            />
+          </div>
+          <div v-else style="max-height: 500px; overflow: scroll">
+            <WidgetsVacantRoomCard
+              :floor_no="floor_no"
+              :items="[
+                ...(rooms.DirtyRooms || []),
+                ...(rooms.Occupied || []),
+                ...(rooms.blockedRooms || []),
+                ...(rooms.vacantRooms || []),
+              ]"
             />
           </div>
         </v-col>
@@ -132,12 +157,36 @@ export default {
   data() {
     return {
       showSearch: false,
-      tabId: 2,
+      tabId: null,
       cards: [],
       rooms: [],
       progress: null,
       roomTypes: [],
       room_type: null,
+      floor_no: null,
+      floors: [
+        { id: null, name: "Select All" },
+        { id: 1, name: "First Floor" },
+        { id: 2, name: "Second Floor" },
+        { id: 3, name: "Third Floor" },
+        { id: 4, name: "Fourth Floor" },
+        { id: 5, name: "Fifth Floor" },
+        { id: 6, name: "Sixth Floor" },
+        { id: 7, name: "Seventh Floor" },
+        { id: 8, name: "Eighth Floor" },
+        { id: 9, name: "Ninth Floor" },
+        { id: 10, name: "Tenth Floor" },
+        { id: 11, name: "Eleventh Floor" },
+        { id: 12, name: "Twelfth Floor" },
+        { id: 13, name: "Thirteenth Floor" },
+        { id: 14, name: "Fourteenth Floor" },
+        { id: 15, name: "Fifteenth Floor" },
+        { id: 16, name: "Sixteenth Floor" },
+        { id: 17, name: "Seventeenth Floor" },
+        { id: 18, name: "Eighteenth Floor" },
+        { id: 19, name: "Nineteenth Floor" },
+        { id: 20, name: "Twentieth Floor" },
+      ],
     };
   },
   created() {
@@ -211,6 +260,7 @@ export default {
         const mapRoomData = (list, extra = {}) =>
           list.map((e) => ({
             id: e.id,
+            floor_no: e.floor_no,
             room_no: e.room_no,
             room_type: e.room_type.name,
             is_cleaned: e.is_cleaned.length,
@@ -228,13 +278,31 @@ export default {
               e.is_neutral?.[0]?.last_cleaned_at ??
               e.is_dirty?.[0]?.last_cleaned_at ??
               "",
+            last_cleaned: e.last_cleaned,
           }));
 
         // Room category arrays
-        const vrs = mapRoomData(vacantRooms);
-        const drs = mapRoomData(dirtyRoomsList, { can_change_status: true });
-        const ors = mapRoomData(checkIn);
-        const brs = mapRoomData(blockedRooms);
+        const vrs = mapRoomData(vacantRooms, {
+          room_status: "available",
+          backgroundColor: "#f5ece3",
+          color: "black",
+        });
+        const drs = mapRoomData(dirtyRoomsList, {
+          can_change_status: true,
+          room_status: "checked_out",
+          backgroundColor: "#d9534f",
+          color: "white",
+        });
+        const ors = mapRoomData(checkIn, {
+          room_status: "checked_in",
+          backgroundColor: "#ddbc91",
+          color: "black",
+        });
+        const brs = mapRoomData(blockedRooms, {
+          room_status: "blocked",
+          backgroundColor: "#75a29f",
+          color: "white",
+        });
 
         // Status totals
         const [totalDirty, totalOccupied, totalVac, totalBlocked] =
@@ -258,36 +326,28 @@ export default {
             color: "white",
             bgColor: "#d9534f",
             label: "Dirty",
-            value: drs
-              .map((e) => e.room_cleaning_status_count)
-              .reduce((acc, cur) => acc + cur, 0),
+            value: drs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
             sub_value: this.getSubValue(dirty.length, totalDirty),
           },
           {
             color: "black",
             bgColor: "#ddbc91",
             label: "Occupied",
-            value: ors
-              .map((e) => e.room_cleaning_status_count)
-              .reduce((acc, cur) => acc + cur, 0),
+            value: ors.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
             sub_value: this.getSubValue(occupied.length, totalOccupied),
           },
           {
             color: "black",
             bgColor: "#f5ece3",
             label: "Vacant",
-            value: vrs
-              .map((e) => e.room_cleaning_status_count)
-              .reduce((acc, cur) => acc + cur, 0),
+            value: vrs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
             sub_value: this.getSubValue(vacantRooms.length, totalVac),
           },
           {
             color: "white",
             bgColor: "#75a29f",
             label: "Blocked",
-            value: brs
-              .map((e) => e.room_cleaning_status_count)
-              .reduce((acc, cur) => acc + cur, 0),
+            value: brs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
             sub_value: this.getSubValue(blocked.length, totalBlocked),
           },
         ];

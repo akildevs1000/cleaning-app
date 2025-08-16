@@ -274,6 +274,20 @@
 
       <!-- New Section for Cleaning Actions (visible when cleaning) -->
       <v-card-text v-else class="pa-6 cleaning-actions-card">
+        <v-row v-if="displayTime" justify="center" class="pb-5">
+          <v-col cols="12" class="text-center">
+            <v-card
+              class="pa-3 d-inline-block"
+              elevation="2"
+              rounded="lg"
+            >
+              <span class="text-h6 font-weight-bold blue--text">
+                {{ displayTime }}
+              </span>
+            </v-card>
+          </v-col>
+        </v-row>
+
         <v-card
           class="pa-4 mb-6"
           :style="
@@ -459,7 +473,7 @@ export default {
         room_id: this.selectedRoom.id,
       };
 
-      this.submit(this.FormData)
+      this.submit(this.FormData);
     },
 
     async submit(FormData) {
