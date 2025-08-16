@@ -21,38 +21,25 @@
         animation: pulse 1s infinite;
       }
     </style>
+
     <v-btn
-      v-if="!isRecording"
       class="pa-6"
       block
       outlined
       rounded
-      color="primary"
+      :color="isRecording ? 'red' : 'primary'"
       @mousedown.native="startRecording"
       @mouseup.native="stopRecording"
       @mouseleave.native="stopRecording"
       @touchstart.native.prevent="startRecording"
       @touchend.native="stopRecording"
     >
-      <v-icon large color="primary">mdi-microphone-outline</v-icon>
-      Voice
-    </v-btn>
-
-    <v-btn
-      v-if="isRecording"
-      @click="stopRecording"
-      class="pa-6"
-      block
-      outlined
-      rounded
-      color="primary"
-    >
       <v-icon
         large
-        :class="`${isRecording ? 'recording-active' : ''}`"
-        color="primary"
-        >mdi-microphone-outline</v-icon
+        :class="isRecording ? 'recording-active' : ''"
       >
+        mdi-microphone-outline
+      </v-icon>
       Voice
     </v-btn>
 
