@@ -60,7 +60,7 @@
          <v-text-field class="mt-3"
           v-model="property_code"
           label="Enter Property Code"
-          maxlength="4"
+          maxlength="10"
           outlined
           dense
           hide-details
