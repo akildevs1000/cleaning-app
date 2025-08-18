@@ -57,6 +57,14 @@
           dense
           hide-details
         ></v-text-field>
+         <v-text-field class="mt-3"
+          v-model="property_code"
+          label="Enter Property Code"
+          maxlength="4"
+          outlined
+          dense
+          hide-details
+        ></v-text-field>
 
         <!-- Error Message -->
         <span
@@ -91,7 +99,8 @@ export default {
     valid: true,
     loading: false,
     snackbar: false,
-    pin: "0000",
+    pin: "",
+    property_code: "",
     device_id: "",
     msg: "",
   }),
@@ -117,6 +126,7 @@ export default {
         this.loading = true;
         let credentials = {
           pin: this.pin,
+          property_code: this.property_code,
           device_id: this.device_id, // ✅ Include device ID
         };
         this.$auth
@@ -135,8 +145,10 @@ export default {
             this.$auth.setUser(updatedUser);
             if (this.remember) {
               localStorage.setItem("pin", this.pin);
+              localStorage.setItem("property_code", this.property_code);
             } else {
               localStorage.removeItem("pin");
+              localStorage.removeItem("property_code");
             }
 
             this.$router.push(`/`);
