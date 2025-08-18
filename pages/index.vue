@@ -1,42 +1,6 @@
 <template>
   <span class="pt-15">
-    <style>
-      .search-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end; /* icon fixed to the right */
-      }
-      .search-icon {
-        cursor: pointer;
-      }
-
-      .slide-right-enter-active,
-      .slide-right-leave-active {
-        transition: all 0.3s ease;
-      }
-
-      .slide-right-enter {
-        opacity: 0;
-        transform: translateX(50px);
-      }
-
-      .slide-right-leave-to {
-        opacity: 0;
-        transform: translateX(50px);
-      }
-    </style>
     <v-container>
-      <v-row>
-        <v-col>
-          <div>
-            <WidgetsProgressCustom
-              v-if="progress"
-              :total="progress.total"
-              :engaged="progress.engaged"
-            />
-          </div>
-        </v-col>
-      </v-row>
       <v-row>
         <v-col cols="12">
           <div class="search-wrapper">
@@ -149,6 +113,16 @@
           </div>
         </v-col>
       </v-row>
+
+      <v-footer fixed app dense flat class="white">
+        <div style="width: 100%" class="pa-5">
+          <WidgetsProgressCustom
+            v-if="progress"
+            :total="progress.total"
+            :engaged="progress.engaged"
+          />
+        </div>
+      </v-footer>
     </v-container>
   </span>
 </template>
@@ -277,8 +251,8 @@ export default {
               e.is_dirty?.[0]?.last_cleaned_at ??
               "",
             last_cleaned: e.last_cleaned,
-            booked_room_id:e?.booked_room?.id,
-            booking_id:e?.booked_room?.booking_id,
+            booked_room_id: e?.booked_room?.id,
+            booking_id: e?.booked_room?.booking_id,
           }));
 
         // Room category arrays
