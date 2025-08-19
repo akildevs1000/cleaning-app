@@ -57,7 +57,8 @@
           dense
           hide-details
         ></v-text-field>
-         <v-text-field class="mt-3"
+        <v-text-field
+          class="mt-3"
           v-model="property_code"
           label="Enter Property Code"
           maxlength="10"
@@ -85,6 +86,8 @@
         >
           Enter
         </v-btn>
+
+        <button @click="testMic">Test Mic</button>
       </v-form>
     </v-container>
   </v-app>
@@ -108,6 +111,19 @@ export default {
     this.device_id = this.generateDeviceId();
   },
   methods: {
+    async testMic() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        alert("Mic stream obtained!");
+        console.log(stream);
+        stream.getTracks().forEach((track) => track.stop()); // stop immediately
+      } catch (err) {
+        alert("Error accessing mic: " + err.message);
+        console.error(err);
+      }
+    },
     generateDeviceId() {
       const existing = localStorage.getItem("device_id");
       if (existing) return existing;
