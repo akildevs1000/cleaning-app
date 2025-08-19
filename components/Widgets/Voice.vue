@@ -128,7 +128,7 @@ export default {
           clearInterval(this.recordingTimer);
 
           this.recordedBlob = new Blob(this.audioChunks, {
-            type: "audio/ogg", // or "audio/webm"
+            type: "audio/webm", // or "audio/webm"
           });
           this.audioUrl = URL.createObjectURL(this.recordedBlob);
 
