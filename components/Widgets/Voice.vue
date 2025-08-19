@@ -28,16 +28,9 @@
       outlined
       rounded
       :color="isRecording ? 'red' : 'primary'"
-      @mousedown.native="startRecording"
-      @mouseup.native="stopRecording"
-      @mouseleave.native="stopRecording"
-      @touchstart.native.prevent="startRecording"
-      @touchend.native="stopRecording"
+      @click="isRecording ? stopRecording() : startRecording()"
     >
-      <v-icon
-        large
-        :class="isRecording ? 'recording-active' : ''"
-      >
+      <v-icon large :class="isRecording ? 'recording-active' : ''">
         mdi-microphone-outline
       </v-icon>
       Voice
@@ -109,17 +102,20 @@ export default {
 
     async startRecording() {
       this.recordedBlob = null;
-      this.recordingDuration = 0; // reset duration counter
+      this.recordingDuration = 0;
+
       try {
+        // Add video:true to make WebView allow audio
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
+          video: false, // or true if needed
         });
+
         this.mediaRecorder = new MediaRecorder(stream);
         this.mediaRecorder.start();
         this.isRecording = true;
         this.audioChunks = [];
 
-        // Start a timer that increments recordingDuration every second
         this.recordingTimer = setInterval(() => {
           this.recordingDuration++;
         }, 1000);
@@ -130,14 +126,20 @@ export default {
 
         this.mediaRecorder.addEventListener("stop", async () => {
           clearInterval(this.recordingTimer);
+
           this.recordedBlob = new Blob(this.audioChunks, {
-            type: "audio/ogg",
-          }); // back to old type
+            type: "audio/ogg", // or "audio/webm"
+          });
           this.audioUrl = URL.createObjectURL(this.recordedBlob);
+
           this.$emit("voice-note", await this.blobToBase64(this.recordedBlob));
+
+          // Stop all tracks to release mic/video
+          stream.getTracks().forEach((track) => track.stop());
         });
       } catch (error) {
         console.error("Error accessing the microphone", error);
+        alert("Mic error: " + error.message);
       }
     },
 
