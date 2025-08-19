@@ -184,7 +184,7 @@
     <v-container
       fluid
       class="d-flex justify-center align-center"
-      style="height: 100vh"
+      style="height: 90vh"
     >
       <v-card flat class="mx-auto" width="100%">
         <!-- New Header - v-app-bar -->
