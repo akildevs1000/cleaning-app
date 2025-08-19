@@ -181,23 +181,24 @@
         animation: flickerGlow 1.2s infinite ease-in-out;
       }
     </style>
+
     <v-container
       fluid
-      class="d-flex justify-center align-center"
-      style="height: 90vh"
     >
-      <v-card flat class="mx-auto" width="100%">
+
+      <v-card flat class="mx-auto" width="100%" style="height:750px !important;">
         <!-- New Header - v-app-bar -->
 
         <!-- Guest Information Section (visible when not cleaning) -->
         <v-card-text v-if="!displayTime" class="pa-6">
+          
           <h2 class="text-h6 font-weight-medium mb-4">Guest Information</h2>
 
           <!-- Room Number -->
           <div class="info-item-card">
             <v-icon color="#42A5F5">mdi-door</v-icon>
             <!-- Blue -->
-            <div class="info-text-container">
+            <div class="info-text-container py-2">
               <div class="info-label">Number</div>
               <div class="info-value">{{ selectedRoom?.room_no || "---" }}</div>
             </div>
@@ -207,7 +208,7 @@
           <div class="info-item-card">
             <v-icon color="#FFC107">mdi-bed</v-icon>
             <!-- Amber -->
-            <div class="info-text-container">
+            <div class="info-text-container py-2">
               <div class="info-label">Type</div>
               <div class="info-value">
                 {{ selectedRoom?.room_type || "---" }}
@@ -219,7 +220,7 @@
           <div class="info-item-card">
             <v-icon color="#9C27B0">mdi-account</v-icon>
             <!-- Purple -->
-            <div class="info-text-container">
+            <div class="info-text-container py-2">
               <div class="info-label">Guest Name</div>
               <div class="info-value">
                 {{ selectedRoom?.guest_name || "---" }}
@@ -231,7 +232,7 @@
           <div class="info-item-card">
             <v-icon color="#E57373">mdi-calendar</v-icon>
             <!-- Light Red -->
-            <div class="info-text-container">
+            <div class="info-text-container py-2">
               <div class="info-label">Check In</div>
               <div class="info-value">
                 {{ selectedRoom?.checkin_datetime_only_display || "---" }}
@@ -243,7 +244,7 @@
           <div class="info-item-card">
             <v-icon color="#E57373">mdi-calendar</v-icon>
             <!-- Light Red -->
-            <div class="info-text-container">
+            <div class="info-text-container py-2">
               <div class="info-label">Check Out</div>
               <div class="info-value">
                 {{ selectedRoom?.checkin_datetime_only_display || "---" }}
@@ -255,7 +256,7 @@
           <div class="info-item-card">
             <v-icon color="#4CAF50">mdi-clock-outline</v-icon>
             <!-- Green -->
-            <div class="info-text-container">
+            <div class="info-text-container py-2">
               <div class="info-label">Last Cleaned</div>
               <div class="info-value">
                 {{ selectedRoom?.last_cleaned_at || "Not Available" }}
@@ -275,15 +276,29 @@
                 <v-icon left>mdi-play</v-icon>
                 START CLEANING
               </v-btn>
+              <br>
+               <v-btn
+                block
+                dark
+                class="rounded-pill pa-5"
+                color="red"
+               @click="$router.push(`/`)"
+              >
+               <v-icon left  large>mdi-close</v-icon>
+                CANCEL
+              </v-btn>
             </v-col>
+
+
+             
           </v-row>
         </v-card-text>
 
         <!-- New Section for Cleaning Actions (visible when cleaning) -->
-        <v-card-text v-else class="pa-6 cleaning-actions-card">
+        <v-card-text v-else class="pa-6 cleaning-actions-card ">
           <v-row v-if="displayTime" justify="center" class="pb-5">
             <v-col cols="12" class="text-center">
-              <v-card class="pa-3 d-inline-block" elevation="2" rounded="lg">
+              <v-card class="px-3 d-inline-block py-10" outlined elevation="0" rounded="lg">
                 <span class="text-h6 font-weight-bold blue--text">
                   {{ displayTime }}
                 </span>

@@ -1,5 +1,5 @@
 <template>
-  <div style="max-height: 500px; overflow: scroll">
+  <div style="max-height: 550px; overflow: scroll" class="pt-5">
     <v-row no-gutters v-if="filteredItems && filteredItems.length > 0">
       <v-col cols="4" v-for="(item, index) in filteredItems" :key="index">
         <!-- <pre>{{ item.room_status }}</pre> -->
@@ -21,9 +21,9 @@
       </v-col>
     </v-row>
 
-    <div v-else
+    <!-- <div v-else
       style="display: flex; justify-content: center; align-items: center; height: 400px; margin-top: 20px; font-size: 16px; font-family: sans-serif;">
-      No rooms found.</div>
+      No rooms found.</div> -->
   </div>
 </template>
 
@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     filteredItems() {
-      const floor_no = this.floor_no;
+      const floor_no = this.$store.state.floor_no;
 
       if (!floor_no) {
         return this.items;

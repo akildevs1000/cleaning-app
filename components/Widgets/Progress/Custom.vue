@@ -3,7 +3,7 @@
     <style>
       .progress-container {
         width: 100%;
-        background-color: #d3d3d3; /* Remaining part color */
+        background-color: #bbbbbb; /* Remaining part color */
         border-radius: 50px;
         overflow: hidden;
         height: 25px;
@@ -12,7 +12,7 @@
       }
 
       .progress-bar {
-        background-color: #2c3e50; /* Engaged color */
+        background-color: #5fafff; /* Engaged color */
         height: 100%;
         color: white;
         text-align: center;

@@ -1,47 +1,6 @@
 <template>
   <span class="pt-15">
     <v-container>
-      <v-row>
-        <v-col cols="12">
-          <div class="search-wrapper">
-            <!-- <transition name="slide-right">
-              <v-autocomplete
-                v-show="showSearch"
-                label="Room Type"
-                outlined
-                dense
-                hide-details
-                item-value="name"
-                item-text="name"
-                v-model="room_type"
-                :items="[{ name: 'Select All' }, ...roomTypes]"
-                @change="dialog = false"
-                class="search-input"
-              ></v-autocomplete>
-            </transition>
-
-            <v-icon
-              color="primary"
-              @click="showSearch = !showSearch"
-              class="search-icon ml-1"
-            >
-              mdi-magnify
-            </v-icon> -->
-
-            <v-autocomplete
-              label="Floor No"
-              v-model="floor_no"
-              outlined
-              dense
-              small
-              hide-details
-              :items="floors"
-              item-text="name"
-              item-value="id"
-            ></v-autocomplete>
-          </div>
-        </v-col>
-      </v-row>
       <v-row class="mt-5 mb-1">
         <!-- <v-col cols="12" class="text-right">
         <v-icon color="black" @click="room_list">mdi-reload</v-icon>
@@ -100,9 +59,8 @@
               room_status="blocked"
             />
           </div>
-          <div v-else style="max-height: 500px; overflow: scroll">
+          <div v-else style="max-height: 550px; overflow: scroll">
             <WidgetsVacantRoomCard
-              :floor_no="floor_no"
               :items="[
                 ...(rooms.DirtyRooms || []),
                 ...(rooms.Occupied || []),
@@ -114,8 +72,8 @@
         </v-col>
       </v-row>
 
-      <v-footer fixed app dense flat class="white">
-        <div style="width: 100%" class="pa-5">
+      <v-footer fixed app dense flat style="bottom:30px; background:#d3d3d3;">
+        <div style="width: 100%;" class="pa-1 ">
           <WidgetsProgressCustom
             v-if="progress"
             :total="progress.total"
@@ -137,38 +95,28 @@ export default {
       progress: null,
       roomTypes: [],
       room_type: null,
-      floor_no: null,
-      floors: [
-        { id: null, name: "Select All" },
-        { id: 1, name: "First Floor" },
-        { id: 2, name: "Second Floor" },
-        { id: 3, name: "Third Floor" },
-        { id: 4, name: "Fourth Floor" },
-        { id: 5, name: "Fifth Floor" },
-        { id: 6, name: "Sixth Floor" },
-        { id: 7, name: "Seventh Floor" },
-        { id: 8, name: "Eighth Floor" },
-        { id: 9, name: "Ninth Floor" },
-        { id: 10, name: "Tenth Floor" },
-        { id: 11, name: "Eleventh Floor" },
-        { id: 12, name: "Twelfth Floor" },
-        { id: 13, name: "Thirteenth Floor" },
-        { id: 14, name: "Fourteenth Floor" },
-        { id: 15, name: "Fifteenth Floor" },
-        { id: 16, name: "Sixteenth Floor" },
-        { id: 17, name: "Seventeenth Floor" },
-        { id: 18, name: "Eighteenth Floor" },
-        { id: 19, name: "Nineteenth Floor" },
-        { id: 20, name: "Twentieth Floor" },
-      ],
     };
   },
   created() {
     this.room_list();
     this.get_room_types();
+    this.getFloors();
   },
 
   methods: {
+    getFloors() {
+      this.$axios
+        .get(`floor-list`, {
+          params: {
+            company_id: this.$auth.user.company.id,
+          },
+        })
+        .then(({ data }) => {
+          if (data.length > 0) {
+            this.floors = data;
+          }
+        });
+    },
     get_room_types() {
       this.$axios
         .get(`room_type`, {

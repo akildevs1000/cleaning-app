@@ -1,5 +1,5 @@
 <template>
-  <v-app class="main_bg">
+  <v-app>
     <style>
       body {
         font-size: 11px !important;
@@ -15,11 +15,54 @@
         border-bottom: 1px solid #e0e0e0;
       }
     </style>
-    <v-app-bar fixed app dense flat>
-      <v-row align="center" >
+    <v-navigation-drawer  v-model="drawer"  app color="white"  class="pa-2" style="width:175px !important;">
+      <v-list dense>
+        <!-- Active selection handler -->
+        <v-list-item-group
+          v-model="$store.state.floor_no"
+          active-class="active-item"
+        >
+          <template
+            v-for="(item, i) in [
+              { id: null, number: null, name: `All Floors` },
+              ...loadMenus,
+            ]"
+          >
+            <v-list-item
+              :key="i"
+              :value="item.number"
+              @click="
+                () => {
+                  $store.commit('setFloorNo', item.number);
+                  drawer = false;
+                }
+              "
+            >
+              <v-list-item-action class="mr-2" style="min-width: auto">
+                <v-icon small>mdi-apps</v-icon>
+              </v-list-item-action>
+
+              <v-list-item-content>
+                <v-list-item-title class="menu-title">
+                  {{ item.name }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-app-bar fixed app dense flat style="background-color:#0b6339 !important;">
+      <v-row align="center">
         <!-- Left side with location and date -->
         <v-col class="text-left" cols="4">
-          <v-row no-gutters>
+          <span class="text-overflow d-flex align-center">
+            <v-btn icon @click.stop="drawer = !drawer">
+              <v-icon color="white">mdi-menu</v-icon>
+            </v-btn>
+          </span>
+          <!-- <v-row no-gutters>
             <v-col cols="8">
               <div style="font-size: 11px" class="text-center text-color">
                 <span class="text-color">
@@ -29,20 +72,12 @@
                 <span class="text-color"> {{ currentTime }}</span>
               </div>
             </v-col>
-          </v-row>
+          </v-row> -->
         </v-col>
 
         <!-- Center title -->
         <v-col class="text-center" cols="4">
           <img src="/login/login-logo.png" style="width: 100%" />
-          <!-- <br />
-          <span class="text-color">
-            {{
-              $auth?.user?.company?.name < 10
-                ? $auth?.user?.company?.name
-                : $auth?.user?.company?.name.slice(0, 1) + " & Co"
-            }}
-          </span> -->
         </v-col>
 
         <!-- Right side with avatar -->
@@ -143,35 +178,10 @@ export default {
   },
   data() {
     return {
+      loadMenus: [],
       currentTime: "00:00:00",
       todayDate: "---",
       activeMenu: null, // Keep track of the active menu
-      topMenus: [
-        {
-          label: "Dashboard",
-          name: "dashboard",
-        },
-        {
-          label: "Customer",
-          name: "customer",
-        },
-        {
-          label: "Account",
-          name: "account",
-        },
-        {
-          label: "Sales",
-          name: "sales",
-        },
-        {
-          label: "Reports",
-          name: "reports",
-        },
-        {
-          label: "Setting",
-          name: "setting",
-        },
-      ],
       pendingNotificationsCount: 0,
       menuName: "",
       show: false,
@@ -184,198 +194,10 @@ export default {
       sideBarcolor: "background",
       year: new Date().getFullYear(),
       dropdown_menus: [{ title: "setting" }, { title: "logout" }],
-      clipped: false,
       open_menu: [],
       drawer: true,
       fixed: false,
       order_count: "",
-      menus: [
-        {
-          topMenu: "dashboard",
-          icon: "mdi-home",
-          title: "Home",
-          to: "/",
-          menu: "dashboard",
-        },
-        {
-          topMenu: "dashboard",
-          icon: "mdi-calendar",
-          title: "Calendar",
-          to: "/",
-          menu: "calendar_access",
-        },
-        {
-          topMenu: "reports",
-          icon: "mdi-chart-areaspline",
-          title: "Analytics",
-          to: "/reports",
-          menu: "dashboard",
-        },
-        {
-          topMenu: "reports",
-          icon: "mdi-chart-areaspline",
-          title: "Night Audit",
-          to: "/management/report/night_audit",
-          menu: "night_audit_access",
-        },
-        {
-          topMenu: "dashboard",
-          icon: "mdi-bed",
-          title: "History",
-          to: "/history",
-          menu: "guest_access",
-        },
-        // {
-        //   topMenu: "customer",
-        //   icon: "mdi mdi-account-tie",
-        //   title: "Guest",
-        //   to: "/customer/list",
-        //   menu: "guest_access",
-        // },
-        {
-          topMenu: "customer",
-          icon: "mdi-ticket-account",
-          title: "Customers",
-          to: "/source",
-          menu: "source_access",
-        },
-        {
-          topMenu: "account",
-          icon: "mdi-bank-transfer",
-          title: "Income",
-          to: "/account",
-          menu: "accounts_posting_access",
-        },
-
-        {
-          topMenu: "account",
-          icon: "mdi-bank-transfer",
-          title: "City Ledger",
-          to: "/city_ledger",
-          menu: "accounts_posting_access",
-        },
-
-        {
-          topMenu: "sales",
-          icon: "mdi-cash",
-          title: "Inquiry",
-          to: "/inquiry",
-          menu: "accounts_posting_access",
-        },
-        {
-          topMenu: "sales",
-          icon: "mdi-cash",
-          title: "Quotation",
-          to: "/sales",
-          menu: "accounts_posting_access",
-        },
-        {
-          topMenu: "sales",
-          icon: "mdi-cash",
-          title: "Invoice",
-          to: "/invoices",
-          menu: "accounts_posting_access",
-        },
-        {
-          topMenu: "account",
-          icon: "mdi mdi-food",
-          title: "Posting",
-          to: "/posting",
-          menu: "accounts_posting_access",
-        },
-        {
-          topMenu: "account",
-          icon: "mdi mdi-bank-transfer-out",
-          title: "Expense",
-          to: "/expense",
-          menu: "accounts_expences_access",
-        },
-        {
-          topMenu: "account",
-          icon: "mdi-cash",
-          title: "GST Bills",
-          to: "/taxable",
-          menu: "accounts_gst_access",
-        },
-        {
-          topMenu: "account",
-          icon: "mdi-account",
-          title: "Vendor",
-          to: "/vendors",
-          menu: "accounts_posting_access",
-        },
-
-        {
-          topMenu: "dashboard",
-          icon: "mdi-home-search-outline",
-          title: "Lost & Found  ",
-          to: "/lost_and_found_items",
-          menu: "lost_and_found_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi mdi-account-details",
-          title: "Company",
-          to: "/companies",
-          menu: "settings_permissions_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi-email",
-          title: "Automation",
-          to: "/template",
-          menu: "settings_rooms_category_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi-bed",
-          title: "Rooms",
-          to: "/room_category",
-          menu: "settings_rooms_category_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi-sofa", // give appropriate icon here
-          title: "Hall",
-          to: "/hall",
-          menu: "settings_rooms_category_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi-tools",
-          title: "Price Setup",
-          to: "/manage",
-          menu: "settings_room_price_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi-cog",
-          title: "Setup",
-          to: "/setup",
-          menu: "settings_room_price_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi mdi-account-tie",
-          title: "Employee",
-          to: "/employee",
-          menu: "settings_users_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi mdi-account-details",
-          title: "Devices",
-          to: "/devices",
-          menu: "devices_permissions_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi mdi-account-check-outline",
-          title: "Roles",
-          to: "/role",
-          menu: "settings_roles_access",
-        },
-      ],
       items: [],
       filteredMenu: [],
       modules: {
@@ -395,13 +217,15 @@ export default {
 
   created() {
     this.title = "MyHotel2Cloud"; // this.$auth.user?.company?.company_code;
- 
+
     this.$router.push("/");
 
     this.setActive({
       label: "Dashboard",
       name: "dashboard",
     });
+
+    this.getFloors();
   },
 
   mounted() {
@@ -444,7 +268,20 @@ export default {
     },
   },
   methods: {
-    goto(path = "/"){
+    getFloors() {
+      this.$axios
+        .get(`floor-list`, {
+          params: {
+            company_id: this.$auth.user.company.id,
+          },
+        })
+        .then(({ data }) => {
+          if (data.length > 0) {
+            this.loadMenus = data;
+          }
+        });
+    },
+    goto(path = "/") {
       this.$router.push(path);
     },
     isActive(menu) {
