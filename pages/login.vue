@@ -86,9 +86,6 @@
           Enter
         </v-btn>
       </v-form>
-
-      <br>
-       <WidgetsVoice />
     </v-container>
   </v-app>
 </template>
