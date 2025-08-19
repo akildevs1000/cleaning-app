@@ -86,8 +86,8 @@
         >
           Enter
         </v-btn>
-
-        <button @click="testMic">Test Mic</button>
+        <br>
+        <v-btn block @click="testMic">Test Mic</v-btn>
       </v-form>
     </v-container>
   </v-app>
