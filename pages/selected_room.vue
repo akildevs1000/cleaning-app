@@ -181,196 +181,205 @@
         animation: flickerGlow 1.2s infinite ease-in-out;
       }
     </style>
-    <v-card flat class="mx-auto" width="100%">
-      <!-- New Header - v-app-bar -->
+    <v-container
+      fluid
+      class="d-flex justify-center align-center"
+      style="height: 100vh"
+    >
+      <v-card flat class="mx-auto" width="100%">
+        <!-- New Header - v-app-bar -->
 
-      <!-- Guest Information Section (visible when not cleaning) -->
-      <v-card-text v-if="!displayTime" class="pa-6">
-        <h2 class="text-h6 font-weight-medium mb-4">Guest Information</h2>
+        <!-- Guest Information Section (visible when not cleaning) -->
+        <v-card-text v-if="!displayTime" class="pa-6">
+          <h2 class="text-h6 font-weight-medium mb-4">Guest Information</h2>
 
-        <!-- Room Number -->
-        <div class="info-item-card">
-          <v-icon color="#42A5F5">mdi-door</v-icon>
-          <!-- Blue -->
-          <div class="info-text-container">
-            <div class="info-label">Number</div>
-            <div class="info-value">{{ selectedRoom?.room_no || "---" }}</div>
-          </div>
-        </div>
-
-        <!-- Room Type -->
-        <div class="info-item-card">
-          <v-icon color="#FFC107">mdi-bed</v-icon>
-          <!-- Amber -->
-          <div class="info-text-container">
-            <div class="info-label">Type</div>
-            <div class="info-value">{{ selectedRoom?.room_type || "---" }}</div>
-          </div>
-        </div>
-
-        <!-- Guest Name -->
-        <div class="info-item-card">
-          <v-icon color="#9C27B0">mdi-account</v-icon>
-          <!-- Purple -->
-          <div class="info-text-container">
-            <div class="info-label">Guest Name</div>
-            <div class="info-value">
-              {{ selectedRoom?.guest_name || "---" }}
+          <!-- Room Number -->
+          <div class="info-item-card">
+            <v-icon color="#42A5F5">mdi-door</v-icon>
+            <!-- Blue -->
+            <div class="info-text-container">
+              <div class="info-label">Number</div>
+              <div class="info-value">{{ selectedRoom?.room_no || "---" }}</div>
             </div>
           </div>
-        </div>
 
-        <!-- Check In -->
-        <div class="info-item-card">
-          <v-icon color="#E57373">mdi-calendar</v-icon>
-          <!-- Light Red -->
-          <div class="info-text-container">
-            <div class="info-label">Check In</div>
-            <div class="info-value">
-              {{ selectedRoom?.checkin_datetime_only_display || "---" }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Check Out -->
-        <div class="info-item-card">
-          <v-icon color="#E57373">mdi-calendar</v-icon>
-          <!-- Light Red -->
-          <div class="info-text-container">
-            <div class="info-label">Check Out</div>
-            <div class="info-value">
-              {{ selectedRoom?.checkin_datetime_only_display || "---" }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Last Cleaned -->
-        <div class="info-item-card">
-          <v-icon color="#4CAF50">mdi-clock-outline</v-icon>
-          <!-- Green -->
-          <div class="info-text-container">
-            <div class="info-label">Last Cleaned</div>
-            <div class="info-value">
-              {{ selectedRoom?.last_cleaned_at || "Not Available" }}
-            </div>
-          </div>
-        </div>
-
-        <v-row>
-          <v-col cols="12 pt-10">
-            <v-btn
-              block
-              dark
-              class="rounded-pill pa-5 flicker-btn"
-              color="primary"
-              @click="start"
-            >
-              <v-icon left>mdi-play</v-icon>
-              START CLEANING
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-card-text>
-
-      <!-- New Section for Cleaning Actions (visible when cleaning) -->
-      <v-card-text v-else class="pa-6 cleaning-actions-card">
-        <v-row v-if="displayTime" justify="center" class="pb-5">
-          <v-col cols="12" class="text-center">
-            <v-card class="pa-3 d-inline-block" elevation="2" rounded="lg">
-              <span class="text-h6 font-weight-bold blue--text">
-                {{ displayTime }}
-              </span>
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <v-card
-          class="pa-4 mb-6"
-          :style="
-            error ? 'border: 1px solid #f96363; border-radius: 12px;' : ''
-          "
-          rounded="lg"
-          flat
-          outlined
-        >
-          <v-row dense justify="space-around">
-            <v-col>
-              <div class="text-center mb-4">
-                <div
-                  class="mb-3"
-                  :class="isDark ? 'white--text' : 'grey--text'"
-                >
-                  Give feedback
-                </div>
-                <v-btn-toggle v-model="FormData.status" rounded outlined>
-                  <v-btn dense x-large value="Dirty" @click="error = false">
-                    <v-icon x-large color="error">mdi-emoticon-sad</v-icon>
-                  </v-btn>
-                  <v-btn dense x-large value="Neutral" @click="error = false">
-                    <v-icon x-large color="yellow darken-3"
-                      >mdi-emoticon-neutral</v-icon
-                    >
-                  </v-btn>
-                  <v-btn dense x-large value="Cleaned" @click="error = false">
-                    <v-icon x-large color="success">mdi-emoticon-happy</v-icon>
-                  </v-btn>
-                </v-btn-toggle>
+          <!-- Room Type -->
+          <div class="info-item-card">
+            <v-icon color="#FFC107">mdi-bed</v-icon>
+            <!-- Amber -->
+            <div class="info-text-container">
+              <div class="info-label">Type</div>
+              <div class="info-value">
+                {{ selectedRoom?.room_type || "---" }}
               </div>
+            </div>
+          </div>
+
+          <!-- Guest Name -->
+          <div class="info-item-card">
+            <v-icon color="#9C27B0">mdi-account</v-icon>
+            <!-- Purple -->
+            <div class="info-text-container">
+              <div class="info-label">Guest Name</div>
+              <div class="info-value">
+                {{ selectedRoom?.guest_name || "---" }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Check In -->
+          <div class="info-item-card">
+            <v-icon color="#E57373">mdi-calendar</v-icon>
+            <!-- Light Red -->
+            <div class="info-text-container">
+              <div class="info-label">Check In</div>
+              <div class="info-value">
+                {{ selectedRoom?.checkin_datetime_only_display || "---" }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Check Out -->
+          <div class="info-item-card">
+            <v-icon color="#E57373">mdi-calendar</v-icon>
+            <!-- Light Red -->
+            <div class="info-text-container">
+              <div class="info-label">Check Out</div>
+              <div class="info-value">
+                {{ selectedRoom?.checkin_datetime_only_display || "---" }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Last Cleaned -->
+          <div class="info-item-card">
+            <v-icon color="#4CAF50">mdi-clock-outline</v-icon>
+            <!-- Green -->
+            <div class="info-text-container">
+              <div class="info-label">Last Cleaned</div>
+              <div class="info-value">
+                {{ selectedRoom?.last_cleaned_at || "Not Available" }}
+              </div>
+            </div>
+          </div>
+
+          <v-row>
+            <v-col cols="12 pt-10">
+              <v-btn
+                block
+                dark
+                class="rounded-pill pa-5 flicker-btn"
+                color="primary"
+                @click="start"
+              >
+                <v-icon left>mdi-play</v-icon>
+                START CLEANING
+              </v-btn>
             </v-col>
           </v-row>
-        </v-card>
+        </v-card-text>
 
-        <v-card
-          class="pt-8 px-8 pb-2"
-          rounded="lg"
-          flat
-          outlined
-          :color="isDark ? darkColors.card : ''"
-          :dark="isDark"
-          :light="!isDark"
-        >
-          <v-row dense>
-            <v-col
-              class="text-center"
-              :class="isDark ? 'white--text' : 'grey--text'"
-            >
-              Take Photo or Record Voice
-            </v-col>
-            <v-col cols="12">
-              <WidgetsUploadAttachment
-                validationMessage="Room not found"
-                :rule="selectedRoom"
-                :displayPreview="false"
-                :label="`${selectedRoom?.room_no}_${Date.now()}.png`"
-                @files-selected="handleFileSelection"
-              />
-            </v-col>
-            <v-col cols="12">
-              <WidgetsVoice
-                @voice-note="
-                  handleVoiceNote(
-                    $event,
-                    `${selectedRoom?.room_no}_${Date.now()}.mp3`
-                  )
-                "
-              />
+        <!-- New Section for Cleaning Actions (visible when cleaning) -->
+        <v-card-text v-else class="pa-6 cleaning-actions-card">
+          <v-row v-if="displayTime" justify="center" class="pb-5">
+            <v-col cols="12" class="text-center">
+              <v-card class="pa-3 d-inline-block" elevation="2" rounded="lg">
+                <span class="text-h6 font-weight-bold blue--text">
+                  {{ displayTime }}
+                </span>
+              </v-card>
             </v-col>
           </v-row>
-        </v-card>
 
-        <v-btn
-          v-if="displayTime"
-          block
-          dark
-          color="error"
-          class="rounded-pill pa-5 flicker-btn mt-10"
-          @click="stop"
-        >
-          <v-icon left>mdi-stop-circle-outline</v-icon>
-          Stop Cleaning
-        </v-btn>
+          <v-card
+            class="pa-4 mb-6"
+            :style="
+              error ? 'border: 1px solid #f96363; border-radius: 12px;' : ''
+            "
+            rounded="lg"
+            flat
+            outlined
+          >
+            <v-row dense justify="space-around">
+              <v-col>
+                <div class="text-center mb-4">
+                  <div
+                    class="mb-3"
+                    :class="isDark ? 'white--text' : 'grey--text'"
+                  >
+                    Give feedback
+                  </div>
+                  <v-btn-toggle v-model="FormData.status" rounded outlined>
+                    <v-btn dense x-large value="Dirty" @click="error = false">
+                      <v-icon x-large color="error">mdi-emoticon-sad</v-icon>
+                    </v-btn>
+                    <v-btn dense x-large value="Neutral" @click="error = false">
+                      <v-icon x-large color="yellow darken-3"
+                        >mdi-emoticon-neutral</v-icon
+                      >
+                    </v-btn>
+                    <v-btn dense x-large value="Cleaned" @click="error = false">
+                      <v-icon x-large color="success"
+                        >mdi-emoticon-happy</v-icon
+                      >
+                    </v-btn>
+                  </v-btn-toggle>
+                </div>
+              </v-col>
+            </v-row>
+          </v-card>
 
-        <!-- <v-btn
+          <v-card
+            class="pt-8 px-8 pb-2"
+            rounded="lg"
+            flat
+            outlined
+            :color="isDark ? darkColors.card : ''"
+            :dark="isDark"
+            :light="!isDark"
+          >
+            <v-row dense>
+              <v-col
+                class="text-center"
+                :class="isDark ? 'white--text' : 'grey--text'"
+              >
+                Take Photo or Record Voice
+              </v-col>
+              <v-col cols="12">
+                <WidgetsUploadAttachment
+                  validationMessage="Room not found"
+                  :rule="selectedRoom"
+                  :displayPreview="false"
+                  :label="`${selectedRoom?.room_no}_${Date.now()}.png`"
+                  @files-selected="handleFileSelection"
+                />
+              </v-col>
+              <v-col cols="12">
+                <WidgetsVoice
+                  @voice-note="
+                    handleVoiceNote(
+                      $event,
+                      `${selectedRoom?.room_no}_${Date.now()}.mp3`
+                    )
+                  "
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+
+          <v-btn
+            v-if="displayTime"
+            block
+            dark
+            color="error"
+            class="rounded-pill pa-5 flicker-btn mt-10"
+            @click="stop"
+          >
+            <v-icon left>mdi-stop-circle-outline</v-icon>
+            Stop Cleaning
+          </v-btn>
+
+          <!-- <v-btn
           v-if="!isCleaningStarted"
           block
           dark
@@ -380,8 +389,9 @@
         >
           Save
         </v-btn> -->
-      </v-card-text>
-    </v-card>
+        </v-card-text>
+      </v-card>
+    </v-container>
   </span>
 </template>
 <script>
@@ -478,7 +488,7 @@ export default {
         cleaned_by_user_id: this.$auth.user.id,
         company_id: this.$auth.user.company_id,
         room_id: this.selectedRoom.id,
-        id: this.lastInsertedRecord.id
+        id: this.lastInsertedRecord.id,
       };
 
       this.submit(this.FormData);
