@@ -28,7 +28,11 @@
       outlined
       rounded
       :color="isRecording ? 'red' : 'primary'"
-      @click="isRecording ? stopRecording() : startRecording()"
+      @mousedown.native="startRecording"
+      @mouseup.native="stopRecording"
+      @mouseleave.native="stopRecording"
+      @touchstart.native.prevent="startRecording"
+      @touchend.native="stopRecording"
     >
       <v-icon large :class="isRecording ? 'recording-active' : ''">
         mdi-microphone-outline
@@ -128,7 +132,7 @@ export default {
           clearInterval(this.recordingTimer);
 
           this.recordedBlob = new Blob(this.audioChunks, {
-            type: "audio/webm", // or "audio/webm"
+            type: "audio/mpeg", // or "audio/webm"
           });
           this.audioUrl = URL.createObjectURL(this.recordedBlob);
 
