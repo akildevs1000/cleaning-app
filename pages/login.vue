@@ -15,40 +15,23 @@
       }
 
       .animated-border .v-card {
-        border-radius: 5px; /* Slightly smaller to show border */
+        border-radius: 5px; 
         background-color: #1e1e2f !important;
       }
 
       @keyframes borderMove {
-        0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
-        }
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
       }
     </style>
 
-    <v-container
-      class="fill-height d-flex flex-column justify-center align-center"
-      fluid
-    >
+    <v-container class="fill-height d-flex flex-column justify-center align-center" fluid>
       <div class="mb-5">
-        <!-- Logo -->
-        <v-img src="/logo1.png" max-width="120" contain class=""></v-img>
+        <v-img src="/logo1.png" max-width="120" contain></v-img>
       </div>
 
-      <!-- Login Form -->
-      <v-form
-        ref="form"
-        method="post"
-        v-model="valid"
-        class="pa-5"
-        style="width: 100%; max-width: 360px"
-      >
+      <v-form ref="form" method="post" v-model="valid" class="pa-5" style="width: 100%; max-width: 360px">
         <v-text-field
           v-model="pin"
           label="Enter 4-Digit PIN"
@@ -57,6 +40,7 @@
           dense
           hide-details
         ></v-text-field>
+
         <v-text-field
           class="mt-3"
           v-model="property_code"
@@ -67,27 +51,21 @@
           hide-details
         ></v-text-field>
 
-        <!-- Error Message -->
-        <span
-          v-if="msg"
-          class="error--text"
-          style="font-size: 12px; display: inline-block; margin-bottom: 10px"
-        >
+        <span v-if="msg" class="error--text" style="font-size: 12px; display: inline-block; margin-bottom: 10px">
           {{ msg }}
         </span>
 
-        <!-- Login Button -->
-        <v-btn
-          block
-          :loading="loading"
-          @click="login"
-          class="mt-2 white--text"
-          style="background-color: #2c3e50"
-        >
+        <v-btn block :loading="loading" @click="login" class="mt-2 white--text" style="background-color: #2c3e50">
           Enter
         </v-btn>
+
         <br>
-        <v-btn block @click="testMic">Test Mic</v-btn>
+
+        <!-- Test Mic Buttons -->
+        <v-btn block color="primary" @mousedown="startRecording" @mouseup="stopRecording">
+          <v-icon left>mdi-microphone-outline</v-icon>
+          Test Mic
+        </v-btn>
       </v-form>
     </v-container>
   </v-app>
@@ -97,11 +75,8 @@
 export default {
   layout: "login",
   data: () => ({
-    remember: false,
-    logo: "/logo1.png",
     valid: true,
     loading: false,
-    snackbar: false,
     pin: "",
     property_code: "",
     device_id: "",
@@ -109,21 +84,14 @@ export default {
   }),
   mounted() {
     this.device_id = this.generateDeviceId();
+
+    // Listen for messages from React Native WebView (like recording complete)
+    window.addEventListener("message", this.handleWebViewMessage);
+  },
+  beforeDestroy() {
+    window.removeEventListener("message", this.handleWebViewMessage);
   },
   methods: {
-    async testMic() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        alert("Mic stream obtained!");
-        console.log(stream);
-        stream.getTracks().forEach((track) => track.stop()); // stop immediately
-      } catch (err) {
-        alert("Error accessing mic: " + err.message);
-        console.error(err);
-      }
-    },
     generateDeviceId() {
       const existing = localStorage.getItem("device_id");
       if (existing) return existing;
@@ -136,48 +104,62 @@ export default {
       localStorage.setItem("device_id", id);
       return id;
     },
+
     login() {
       if (this.$refs.form.validate()) {
         this.msg = "";
         this.loading = true;
-        let credentials = {
+
+        const credentials = {
           pin: this.pin,
           property_code: this.property_code,
-          device_id: this.device_id, // ✅ Include device ID
+          device_id: this.device_id,
         };
+
         this.$auth
-          .loginWith(
-            "local",
-            { data: credentials },
-            {
-              "Access-Control-Allow-Origin": "*",
-            }
-          )
+          .loginWith("local", { data: credentials })
           .then(({ data }) => {
             this.$auth.user_verified_mobileotp = true;
-            const updatedUser = Object.assign({}, this.$auth.user, {
-              is_verified: 1,
-            });
+            const updatedUser = Object.assign({}, this.$auth.user, { is_verified: 1 });
             this.$auth.setUser(updatedUser);
-            if (this.remember) {
-              localStorage.setItem("pin", this.pin);
-              localStorage.setItem("property_code", this.property_code);
-            } else {
-              localStorage.removeItem("pin");
-              localStorage.removeItem("property_code");
-            }
-
             this.$router.push(`/`);
-            // return;
           })
           .catch(({ response }) => {
-            if (!response) {
-              return false;
-            }
-            let { status, data, statusText } = response;
+            if (!response) return;
+            const { status, data, statusText } = response;
             this.msg = status == 422 ? data.message : statusText;
             setTimeout(() => (this.loading = false), 2000);
           });
+      }
+    },
+
+    // --------------------------
+    // Native recording triggers
+    // --------------------------
+    startRecording() {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: "start-recording" }));
+      } else {
+        alert("WebView bridge not available!");
+      }
+    },
+
+    stopRecording() {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: "stop-recording" }));
+      }
+    },
+
+    handleWebViewMessage(event) {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type === "voice-note") {
+          console.log("Received audio URI from React Native:", msg.data);
+          alert("Voice note recorded! URI: " + msg.data);
+          // You can now upload this URI to backend or play it
+        }
+      } catch (err) {
+        console.error("Error parsing message from WebView", err);
       }
     },
   },
