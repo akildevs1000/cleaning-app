@@ -131,7 +131,7 @@ export default {
         this.mediaRecorder.addEventListener("stop", async () => {
           clearInterval(this.recordingTimer);
           this.recordedBlob = new Blob(this.audioChunks, {
-            type: "audio/mpeg",
+            type: "audio/ogg",
           }); // back to old type
           this.audioUrl = URL.createObjectURL(this.recordedBlob);
           this.$emit("voice-note", await this.blobToBase64(this.recordedBlob));
