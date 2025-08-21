@@ -93,7 +93,6 @@
           0px 4px 5px 0px rgba(0, 0, 0, 0.14),
           0px 1px 10px 0px rgba(0, 0, 0, 0.12) !important;
         /* More pronounced shadow */
-        border-radius: 15px 15px 0 0 !important;
         /* Match top border radius of the card */
       }
 
@@ -274,7 +273,7 @@
                 @click="start"
               >
                 <v-icon left>mdi-play</v-icon>
-                START CLEANING
+                START {{ selectedRoom?.action_type }}
               </v-btn>
               <br>
                <v-btn
@@ -296,7 +295,7 @@
 
         <!-- New Section for Cleaning Actions (visible when cleaning) -->
         <v-card-text v-else class="pa-6 cleaning-actions-card ">
-          <v-row v-if="displayTime" justify="center" class="pb-5">
+          <v-row v-if="displayTime && selectedRoom.action_type == 'cleaning'" justify="center" class="pb-5">
             <v-col cols="12" class="text-center">
               <v-card class="px-3 d-inline-block py-10" outlined elevation="0" rounded="lg">
                 <span class="text-h6 font-weight-bold blue--text">
@@ -391,7 +390,7 @@
             @click="stop"
           >
             <v-icon left>mdi-stop-circle-outline</v-icon>
-            Stop Cleaning
+            Stop {{selectedRoom?.action_type}}
           </v-btn>
 
           <!-- <v-btn

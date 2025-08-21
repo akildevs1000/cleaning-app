@@ -1,5 +1,5 @@
 <template>
-  <div style="max-height: 550px; overflow: scroll" class="pt-5">
+  <div style="max-height: 550px; overflow: scroll">
     <v-row no-gutters v-if="filteredItems && filteredItems.length > 0">
       <v-col cols="4" v-for="(item, index) in filteredItems" :key="index">
         <!-- <pre>{{ item.room_status }}</pre> -->
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  props: ["items", "bgColor", "color", "room_type", "floor_no"],
+  props: ["items", "bgColor", "color", "room_type", "floor_no","action_type"],
   data() {
     return {
       selectedIndex: null, // State to keep track of the selected index
@@ -119,6 +119,7 @@ export default {
     },
 
     selectRoom(index, item) {
+      item.action_type = this.action_type;
       this.selectedIndex = index;
       const queryData = encodeURIComponent(JSON.stringify(item));
       this.$router.push({ path: "/selected_room", query: { data: queryData } });
