@@ -4,11 +4,13 @@
       type="file"
       :ref="'fileInput'"
       style="display: none"
+      accept="image/*"
+      capture="environment"
       multiple
       @change="handleFileInputChange"
     />
 
-    <div  v-if="files.length">
+    <div v-if="files.length">
       <div
         v-for="(file, index) in files"
         :key="file.key"
@@ -32,7 +34,7 @@
         />
       </div>
     </div>
-     <v-btn
+    <v-btn
       @click="triggerFileInput"
       class="pa-6"
       block
@@ -71,7 +73,7 @@ export default {
   },
   data() {
     return {
-      showUploads:false,
+      showUploads: false,
       files: [], // Array of { file, preview, size, key }
       currentComponent: "WidgetsViewTempFile",
       keyCounter: 1,
