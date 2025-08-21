@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-slider
+      readonly
       v-model="engagedValue"
       :max="total"
       :step="1"

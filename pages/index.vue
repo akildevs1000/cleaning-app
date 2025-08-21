@@ -10,64 +10,99 @@
 
     <v-img height="250" :src="imageSrc"></v-img>
 
-    <v-card-title class="pt-10">
-      <WidgetsProgressCustom
-        v-if="progress"
-        :total="progress.total"
-        :engaged="progress.engaged"
-      />
-    </v-card-title>
-
     <v-card-text class="mx-0 px-0">
-      <div v-if="tabId">
-        <WidgetsVacantRoomCard
-          :action_type="action_type"
-          bgColor="#d9534f"
-          color="white"
-          v-if="tabId == 0"
-          :items="rooms.DirtyRooms"
-          :room_type="room_type"
-          room_status="checked_out"
-        />
-        <WidgetsVacantRoomCard
-          :action_type="action_type"
-          bgColor="#ddbc91"
-          color="black"
-          v-if="tabId == 1"
-          :items="rooms.Occupied"
-          :room_type="room_type"
-          room_status="checked_in"
-        />
-        <WidgetsVacantRoomCard
-          :action_type="action_type"
-          bgColor="#f5ece3"
-          color="black"
-          v-if="tabId == 2"
-          :items="rooms.vacantRooms"
-          :room_type="room_type"
-          room_status="available"
-        />
-        <WidgetsVacantRoomCard
-          :action_type="action_type"
-          bgColor="#75a29f"
-          color="white"
-          v-if="tabId == 3"
-          :items="rooms.blockedRooms"
-          :room_type="room_type"
-          room_status="blocked"
-        />
-      </div>
-      <div v-else style="max-height: 550px; overflow: scroll">
-        <WidgetsVacantRoomCard
-          :action_type="action_type"
-          :items="[
-            ...(rooms.DirtyRooms || []),
-            ...(rooms.Occupied || []),
-            ...(rooms.blockedRooms || []),
-            ...(rooms.vacantRooms || []),
-          ]"
-        />
-      </div>
+      <v-row class="mt-2">
+        <v-col cols="12">
+          <WidgetsProgressCustom
+            v-if="progress"
+            :total="progress.total"
+            :engaged="progress.engaged"
+          />
+        </v-col>
+      </v-row>
+      <v-row class="pt-1 ma-0">
+         <v-col cols="6" class="text-center">
+          <v-btn
+            block
+            dark
+            :color="action_type === 'cleaning' ? '#8e44ff' : 'grey'"
+            class="px-3 py-1"
+            @click="setActionType('cleaning')"
+            rounded
+            elevation="2"
+          >
+            <v-icon left>mdi-broom</v-icon>
+            Cleaning
+          </v-btn>
+        </v-col>
+        <v-col cols="6" class="text-center">
+          <v-btn
+            block
+            dark
+            :color="action_type === 'checkout' ? '#8e44ff' : 'grey'"
+            class="px-3 py-1"
+            @click="setActionType('checkout')"
+            rounded
+            elevation="2"
+          >
+            <v-icon left>mdi-clock</v-icon>
+            Check Out
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row no-gutters class="mt-5">
+        <v-col cols="12">
+          <div v-if="tabId">
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              bgColor="#d9534f"
+              color="white"
+              v-if="tabId == 0"
+              :items="rooms.DirtyRooms"
+              :room_type="room_type"
+              room_status="checked_out"
+            />
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              bgColor="#ddbc91"
+              color="black"
+              v-if="tabId == 1"
+              :items="rooms.Occupied"
+              :room_type="room_type"
+              room_status="checked_in"
+            />
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              bgColor="#f5ece3"
+              color="black"
+              v-if="tabId == 2"
+              :items="rooms.vacantRooms"
+              :room_type="room_type"
+              room_status="available"
+            />
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              bgColor="#75a29f"
+              color="white"
+              v-if="tabId == 3"
+              :items="rooms.blockedRooms"
+              :room_type="room_type"
+              room_status="blocked"
+            />
+          </div>
+          <div v-else style="max-height: 550px; overflow: scroll">
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              :items="[
+                ...(rooms.DirtyRooms || []),
+                ...(rooms.Occupied || []),
+                ...(rooms.blockedRooms || []),
+                ...(rooms.vacantRooms || []),
+              ]"
+            />
+          </div>
+        </v-col>
+      </v-row>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>
@@ -96,40 +131,6 @@
           </v-card>
         </v-col> -->
         <!-- </v-row> -->
-
-        <v-row align="center">
-          <v-col cols="12" class="mb-1"></v-col>
-
-          <v-col class="text-center">
-            <v-btn
-              block
-              dark
-              color="#8e44ff"
-              class="pa-3"
-              @click="setActionType(`cleaning`)"
-              rounded
-              elevation="2"
-            >
-              <v-icon left>mdi-broom</v-icon>
-              Cleaning
-            </v-btn>
-          </v-col>
-
-          <v-col class="text-center">
-            <v-btn
-              block
-              dark
-              color="#8e44ff"
-              class="pa-3"
-              @click="setActionType(`checkout`)"
-              rounded
-              elevation="2"
-            >
-              <v-icon left>mdi-clock</v-icon>
-              Check Out
-            </v-btn>
-          </v-col>
-        </v-row>
       </v-container>
     </span>
   </v-card>
