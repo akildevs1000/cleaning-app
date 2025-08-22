@@ -470,6 +470,7 @@ export default {
         ...this.FormData,
         start_time: start_time,
         room_id: this.selectedRoom.id,
+        action_type: this.selectedRoom.action_type,
         end_time: "00:00:00",
         cleaned_by_user_id: this.$auth.user.id,
         company_id: this.$auth.user.company_id,
