@@ -159,7 +159,7 @@ export default {
       dark: false,
       themes: {
         light: {
-          primary: "#4390FC",
+          primary: "#8e44ff",
           // primary: "#5fafa3",
           accent: "#d8363a",
           secondary: "#242424",

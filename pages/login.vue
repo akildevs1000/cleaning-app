@@ -37,8 +37,20 @@
       fluid
     >
       <div class="mb-5">
+        <v-img
+          class="text-center"
+          style="width: 200px; padding: 0px; margin: auto; text-align: center"
+          src="/logo1.png"
+        ></v-img>
+
         <!-- Logo -->
-        <v-img src="/logo1.png" max-width="120" contain class=""></v-img>
+      </div>
+
+      <div>
+        <h3 class="py-5">
+          Welcome To
+          <span style="font-size: 20px"> MyHote2Cloud </span>
+        </h3>
       </div>
 
       <!-- Login Form -->
@@ -50,6 +62,7 @@
         style="width: 100%; max-width: 360px"
       >
         <v-text-field
+          append-icon="mdi-lock"
           v-model="pin"
           label="Enter 4-Digit PIN"
           maxlength="4"
@@ -57,7 +70,9 @@
           dense
           hide-details
         ></v-text-field>
-         <v-text-field class="mt-3"
+        <v-text-field
+          append-icon="mdi-lock"
+          class="mt-3"
           v-model="property_code"
           label="Enter Property Code"
           maxlength="10"
@@ -77,15 +92,18 @@
 
         <!-- Login Button -->
         <v-btn
+          large
           block
           :loading="loading"
           @click="login"
-          class="mt-2 white--text"
-          style="background-color: #2c3e50"
+          class="mt-5 white--text primary"
+          rounded
         >
           Enter
         </v-btn>
       </v-form>
+
+      <div class="text-center">Don't Have an Account?. Contact Admin</div>
     </v-container>
   </v-app>
 </template>

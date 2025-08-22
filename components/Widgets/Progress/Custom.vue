@@ -6,8 +6,8 @@
       :max="total"
       :step="1"
       track-color="#d8bfff"
-      color="#8e44ff"
-      thumb-color="#8e44ff"
+      color="primary"
+      thumb-color="primary"
       thumb-label="always"
       hide-details
     ></v-slider>
