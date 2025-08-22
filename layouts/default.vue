@@ -15,7 +15,13 @@
         border-bottom: 1px solid #e0e0e0;
       }
     </style>
-    <v-navigation-drawer  v-model="drawer"  app color="white"  class="pa-2" style="width:175px !important;">
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      color="white"
+      class="pa-2"
+      style="width: 175px !important"
+    >
       <v-list dense>
         <!-- Active selection handler -->
         <v-list-item-group
@@ -53,14 +59,34 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar fixed app dense flat style="background-color:#0b6339 !important;">
+    <v-app-bar
+      fixed
+      app
+      dense
+      flat
+      :style="{ backgroundColor: currentColor }"
+      @touchstart="handleTap"
+    >
+      <!-- Color picker dialog -->
+      <v-menu v-model="showPicker" offset-y>
+        <v-color-picker v-model="currentColor"  />
+      </v-menu>
+      <!-- #8e44ff purple -->
+
       <v-row align="center">
         <!-- Left side with location and date -->
         <v-col class="text-left" cols="4">
           <span class="text-overflow d-flex align-center">
-            <v-btn icon @click.stop="drawer = !drawer">
-              <v-icon color="white">mdi-menu</v-icon>
-            </v-btn>
+             <v-icon @click.stop="drawer = !drawer" color="white">mdi-menu</v-icon>
+
+            <!-- Color Picker button -->
+            <!-- <v-icon
+              color="white"
+              v-if="showColorPicker"
+              icon
+              @click="showPicker = !showPicker"
+              >mdi-palette</v-icon
+            > -->
           </span>
           <!-- <v-row no-gutters>
             <v-col cols="8">
@@ -76,63 +102,13 @@
         </v-col>
 
         <!-- Center title -->
-        <v-col class="text-center" cols="4">
-          <img src="/login/login-logo.png" style="width: 100%" />
+        <v-col class="text-center white--text body-1" cols="4">
+          MYHOTE2CLOUD
         </v-col>
 
         <!-- Right side with avatar -->
         <v-col class="text-right" cols="4">
-          <v-menu
-            nudge-bottom="50"
-            nudge-left="20"
-            transition="scale-transition"
-            origin="center center"
-            bottom
-            left
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-avatar v-bind="attrs" v-on="on">
-                <img :src="getLogo || '/no-image.PNG'" />
-              </v-avatar>
-            </template>
-
-            <v-list light nav dense>
-              <v-list-item-group color="primary">
-                <v-list-item @click="goToCompany()">
-                  <v-list-item-icon>
-                    <v-icon>mdi-account-multiple-outline</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="grey--text"
-                      >Profile</v-list-item-title
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-
-                <v-list-item @click="goToReport()">
-                  <v-list-item-icon>
-                    <v-icon>mdi mdi-text-account</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="grey--text"
-                      >Report</v-list-item-title
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-
-                <v-list-item @click="logout">
-                  <v-list-item-icon>
-                    <v-icon>mdi-logout</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="grey--text"
-                      >Logout</v-list-item-title
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-menu>
+          <v-icon color="white">mdi-logout</v-icon>
         </v-col>
       </v-row>
     </v-app-bar>
@@ -158,6 +134,11 @@ export default {
   },
   data() {
     return {
+      tapCount: 0,
+      showColorPicker: false,
+      showPicker: false,
+      currentColor: "#0b6339",
+      tapTimeout: null,
       loadMenus: [],
       currentTime: "00:00:00",
       todayDate: "---",
@@ -248,6 +229,20 @@ export default {
     },
   },
   methods: {
+    handleTap() {
+      this.tapCount++;
+
+      if (this.tapTimeout) clearTimeout(this.tapTimeout);
+
+      this.tapTimeout = setTimeout(() => {
+        this.tapCount = 0;
+      }, 500); // Reset tap count if no tap in 0.5s
+
+      if (this.tapCount === 3) {
+        this.showColorPicker = !this.showColorPicker;
+        this.tapCount = 0;
+      }
+    },
     getFloors() {
       this.$axios
         .get(`floor-list`, {
