@@ -37,8 +37,7 @@ jobs:
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USERNAME@$SERVER_IP" \
           'if [ -d /var/www/myhotel2cloud/cleaning-app ]; then
-             TIMESTAMP=$(date +"%Y%m%d%H%M%S");
-             cp -r /var/www/myhotel2cloud/cleaning-app /var/www/myhotel2cloud/cleaning-app-version-$TIMESTAMP;
+             cp -r /var/www/myhotel2cloud/cleaning-app /var/www/myhotel2cloud/cleaning-app-backup
            fi'
 
           sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r dist/* "$SSH_USERNAME@$SERVER_IP:/var/www/myhotel2cloud/cleaning-app/"

@@ -148,7 +148,7 @@ export default {
       progress: null,
       roomTypes: [],
       room_type: null,
-      action_type: null,
+      action_type: "cleaning",
     };
   },
   created() {

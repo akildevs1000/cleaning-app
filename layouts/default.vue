@@ -108,7 +108,7 @@
 
         <!-- Right side with avatar -->
         <v-col class="text-right" cols="4">
-          <v-icon color="white">mdi-logout</v-icon>
+          <v-icon color="white" @click="logout">mdi-logout</v-icon>
         </v-col>
       </v-row>
     </v-app-bar>
