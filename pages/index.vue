@@ -1,120 +1,159 @@
 <template>
-  <v-card class="mx-auto mt-5 pb-15" flat max-width="374">
-    <template slot="progress">
-      <v-progress-linear
-        color="deep-purple"
-        height="10"
-        indeterminate
-      ></v-progress-linear>
-    </template>
+  <span>
+    <style>
+      .position-relative {
+        position: relative;
+      }
 
-    <v-img height="250" :src="imageSrc"></v-img>
+      .menu-btn {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white; /* Ensure icon is visible on image */
+        z-index: 10;
+      }
+      .logout-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: white; /* Ensure icon is visible on image */
+        z-index: 10;
+      }
+    </style>
+    <v-card class="position-relative" flat>
+      <!-- Image as background -->
+      <v-img height="250" :src="imageSrc"></v-img>
 
-    <v-card-text class="mx-0 px-0">
-      <v-row class="mt-2">
-        <v-col cols="12">
-          <WidgetsProgressCustom
-            v-if="progress"
-            :total="progress.total"
-            :engaged="progress.engaged"
-          />
-        </v-col>
-      </v-row>
-      <v-row class="pt-1 ma-0">
-         <v-col cols="6" class="text-center">
-          <v-btn
-            block
-            dark
-            :color="action_type === 'cleaning' ? '#8e44ff' : 'grey'"
-            class="px-3 py-1"
-            @click="setActionType('cleaning')"
-            rounded
-            elevation="2"
-          >
-            <v-icon left>mdi-broom</v-icon>
-            Cleaning
-          </v-btn>
-        </v-col>
-        <v-col cols="6" class="text-center">
-          <v-btn
-            block
-            dark
-            :color="action_type === 'checkout' ? '#8e44ff' : 'grey'"
-            class="px-3 py-1"
-            @click="setActionType('checkout')"
-            rounded
-            elevation="2"
-          >
-            <v-icon left>mdi-clock</v-icon>
-            Check Out
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row no-gutters class="mt-5">
-        <v-col cols="12">
-          <div v-if="tabId">
-            <WidgetsVacantRoomCard
-              :action_type="action_type"
-              bgColor="#d9534f"
-              color="white"
-              v-if="tabId == 0"
-              :items="rooms.DirtyRooms"
-              :room_type="room_type"
-              room_status="checked_out"
-            />
-            <WidgetsVacantRoomCard
-              :action_type="action_type"
-              bgColor="#ddbc91"
-              color="black"
-              v-if="tabId == 1"
-              :items="rooms.Occupied"
-              :room_type="room_type"
-              room_status="checked_in"
-            />
-            <WidgetsVacantRoomCard
-              :action_type="action_type"
-              bgColor="#f5ece3"
-              color="black"
-              v-if="tabId == 2"
-              :items="rooms.vacantRooms"
-              :room_type="room_type"
-              room_status="available"
-            />
-            <WidgetsVacantRoomCard
-              :action_type="action_type"
-              bgColor="#75a29f"
-              color="white"
-              v-if="tabId == 3"
-              :items="rooms.blockedRooms"
-              :room_type="room_type"
-              room_status="blocked"
-            />
-          </div>
-          <div v-else style="max-height: 550px; overflow: scroll">
-            <WidgetsVacantRoomCard
-              :action_type="action_type"
-              :items="[
-                ...(rooms.DirtyRooms || []),
-                ...(rooms.Occupied || []),
-                ...(rooms.blockedRooms || []),
-                ...(rooms.vacantRooms || []),
-              ]"
-            />
-          </div>
-        </v-col>
-      </v-row>
-    </v-card-text>
+      <!-- Menu button over the image -->
+      <v-btn v-show="!drawer"
+        icon
+        class="menu-btn"
+        style="background-color: rgba(0, 0, 0, 0.6)"
+        elevation="2"
+        @click="drawer = true"
+      >
+        <v-icon color="white">mdi-menu</v-icon>
+      </v-btn>
 
-    <v-divider class="mx-4"></v-divider>
+       <v-btn 
+        icon
+        class="logout-btn"
+        style="background-color: rgba(0, 0, 0, 0.6)"
+        elevation="2"
+        @click="logout"
+      >
+        <v-icon color="white">mdi-logout</v-icon>
+      </v-btn>
+     
+      
+    </v-card>
 
-    <span class="pt-15">
-      <v-container>
-        <!-- <v-row class="mt-5 mb-1"> -->
-        <!-- <v-col cols="12" class="text-right">
+    <v-card class="mx-auto mt-5 pb-15" flat max-width="374">
+      <v-card-text class="mx-0 px-0">
+        <v-row class="mt-2">
+          <v-col cols="12">
+            <WidgetsProgressCustom
+              v-if="progress"
+              :total="progress.total"
+              :engaged="progress.engaged"
+            />
+          </v-col>
+        </v-row>
+        <v-row class="pt-1 ma-0">
+          <v-col cols="6" class="text-center">
+            <v-btn
+              block
+              dark
+              :color="action_type === 'cleaning' ? '#8e44ff' : 'grey'"
+              class="px-3 py-1"
+              @click="setActionType('cleaning')"
+              rounded
+              elevation="2"
+            >
+              <v-icon left>mdi-broom</v-icon>
+              Cleaning
+            </v-btn>
+          </v-col>
+          <v-col cols="6" class="text-center">
+            <v-btn
+              block
+              dark
+              :color="action_type === 'checkout' ? '#8e44ff' : 'grey'"
+              class="px-3 py-1"
+              @click="setActionType('checkout')"
+              rounded
+              elevation="2"
+            >
+              <v-icon left>mdi-clock</v-icon>
+              Check Out
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-row no-gutters class="mt-5">
+          <v-col cols="12">
+            <div v-if="tabId">
+              <WidgetsVacantRoomCard
+                :action_type="action_type"
+                bgColor="#d9534f"
+                color="white"
+                v-if="tabId == 0"
+                :items="rooms.DirtyRooms"
+                :room_type="room_type"
+                room_status="checked_out"
+              />
+              <WidgetsVacantRoomCard
+                :action_type="action_type"
+                bgColor="#ddbc91"
+                color="black"
+                v-if="tabId == 1"
+                :items="rooms.Occupied"
+                :room_type="room_type"
+                room_status="checked_in"
+              />
+              <WidgetsVacantRoomCard
+                :action_type="action_type"
+                bgColor="#f5ece3"
+                color="black"
+                v-if="tabId == 2"
+                :items="rooms.vacantRooms"
+                :room_type="room_type"
+                room_status="available"
+              />
+              <WidgetsVacantRoomCard
+                :action_type="action_type"
+                bgColor="#75a29f"
+                color="white"
+                v-if="tabId == 3"
+                :items="rooms.blockedRooms"
+                :room_type="room_type"
+                room_status="blocked"
+              />
+            </div>
+            <div v-else style="max-height: 550px; overflow: scroll">
+              <WidgetsVacantRoomCard
+                :action_type="action_type"
+                :items="[
+                  ...(rooms.DirtyRooms || []),
+                  ...(rooms.Occupied || []),
+                  ...(rooms.blockedRooms || []),
+                  ...(rooms.vacantRooms || []),
+                ]"
+              />
+            </div>
+          </v-col>
+        </v-row>
+      </v-card-text>
+
+      <v-divider class="mx-4"></v-divider>
+
+      <span class="pt-15">
+        <v-container>
+          <!-- <v-row class="mt-5 mb-1"> -->
+          <!-- <v-col cols="12" class="text-right">
         <v-icon color="black" @click="room_list">mdi-reload</v-icon>
       </v-col> -->
 
-        <!-- <v-col v-for="(item, index) in cards" :key="index">
+          <!-- <v-col v-for="(item, index) in cards" :key="index">
           <v-card
             elevation="0"
             height="70"
@@ -130,10 +169,55 @@
             </div>
           </v-card>
         </v-col> -->
-        <!-- </v-row> -->
-      </v-container>
-    </span>
-  </v-card>
+          <!-- </v-row> -->
+        </v-container>
+      </span>
+    </v-card>
+
+     <v-navigation-drawer
+      v-model="drawer"
+      app
+      color="white"
+      class="pa-2"
+      style="width: 175px !important"
+    >
+      <v-list dense>
+        <!-- Active selection handler -->
+        <v-list-item-group
+          v-model="$store.state.floor_no"
+          active-class="active-item"
+        >
+          <template
+            v-for="(item, i) in [
+              { id: null, number: null, name: `All Floors` },
+              ...loadMenus,
+            ]"
+          >
+            <v-list-item
+              :key="i"
+              :value="item.number"
+              @click="
+                () => {
+                  $store.commit('setFloorNo', item.number);
+                  drawer = false;
+                }
+              "
+            >
+              <v-list-item-action class="mr-2" style="min-width: auto">
+                <v-icon small>mdi-apps</v-icon>
+              </v-list-item-action>
+
+              <v-list-item-content>
+                <v-list-item-title class="menu-title">
+                  {{ item.name }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+  </span>
 </template>
 <script>
 export default {
@@ -149,6 +233,8 @@ export default {
       roomTypes: [],
       room_type: null,
       action_type: "cleaning",
+      drawer: false,
+      loadMenus: [],
     };
   },
   created() {
@@ -158,6 +244,11 @@ export default {
   },
 
   methods: {
+    async logout() {
+      this.$axios.get(`/logout`).then(({ res }) => {
+        this.$auth.logout();
+      });
+    },
     setActionType(action) {
       this.action_type = action;
 
@@ -178,7 +269,7 @@ export default {
         })
         .then(({ data }) => {
           if (data.length > 0) {
-            this.floors = data;
+            this.loadMenus = data;
           }
         });
     },

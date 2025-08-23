@@ -103,7 +103,7 @@
         </v-btn>
       </v-form>
 
-      <div class="text-center">Don't Have an Account?. Contact Admin</div>
+      <div class="text-center">Don't Have an Account? Contact Admin</div>
     </v-container>
   </v-app>
 </template>

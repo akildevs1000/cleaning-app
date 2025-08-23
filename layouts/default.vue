@@ -59,7 +59,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar
+    <!-- <v-app-bar
       fixed
       app
       dense
@@ -67,55 +67,27 @@
       :style="{ backgroundColor: currentColor }"
       @touchstart="handleTap"
     >
-      <!-- Color picker dialog -->
       <v-menu v-model="showPicker" offset-y>
         <v-color-picker v-model="currentColor"  />
       </v-menu>
-      <!-- #8e44ff purple -->
-
       <v-row align="center">
-        <!-- Left side with location and date -->
         <v-col class="text-left" cols="4">
           <span class="text-overflow d-flex align-center">
              <v-icon @click.stop="drawer = !drawer" color="white">mdi-menu</v-icon>
-
-            <!-- Color Picker button -->
-            <!-- <v-icon
-              color="white"
-              v-if="showColorPicker"
-              icon
-              @click="showPicker = !showPicker"
-              >mdi-palette</v-icon
-            > -->
           </span>
-          <!-- <v-row no-gutters>
-            <v-col cols="8">
-              <div style="font-size: 11px" class="text-center text-color">
-                <span class="text-color">
-                  {{ $dateFormat.dmy(new Date()) }}</span
-                >
-                <br />
-                <span class="text-color"> {{ currentTime }}</span>
-              </div>
-            </v-col>
-          </v-row> -->
         </v-col>
 
-        <!-- Center title -->
         <v-col class="text-center white--text body-1" cols="4">
           MYHOTE2CLOUD
         </v-col>
 
-        <!-- Right side with avatar -->
         <v-col class="text-right" cols="4">
           <v-icon color="white" @click="logout">mdi-logout</v-icon>
         </v-col>
       </v-row>
-    </v-app-bar>
+    </v-app-bar> -->
     <v-main>
-      <v-container fluid>
-        <nuxt />
-      </v-container>
+     <nuxt />
     </v-main>
   </v-app>
 </template>
@@ -156,7 +128,7 @@ export default {
       year: new Date().getFullYear(),
       dropdown_menus: [{ title: "setting" }, { title: "logout" }],
       open_menu: [],
-      drawer: true,
+      drawer: false,
       fixed: false,
       order_count: "",
       items: [],
