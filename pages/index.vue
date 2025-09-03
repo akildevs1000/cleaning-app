@@ -1,222 +1,122 @@
 <template>
   <span>
-    <style>
-      .position-relative {
-        position: relative;
-      }
-
-      .menu-btn {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        color: white; /* Ensure icon is visible on image */
-        z-index: 10;
-      }
-      .logout-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        color: white; /* Ensure icon is visible on image */
-        z-index: 10;
-      }
-    </style>
-    <v-card class="position-relative" flat>
-      <!-- Image as background -->
-      <v-img height="250" :src="imageSrc"></v-img>
-
-      <!-- Menu button over the image -->
-      <v-btn v-show="!drawer"
-        icon
-        class="menu-btn"
-        style="background-color: rgba(0, 0, 0, 0.6)"
-        elevation="2"
-        @click="drawer = true"
-      >
-        <v-icon color="white">mdi-menu</v-icon>
-      </v-btn>
-
-       <v-btn 
-        icon
-        class="logout-btn"
-        style="background-color: rgba(0, 0, 0, 0.6)"
-        elevation="2"
-        @click="logout"
-      >
-        <v-icon color="white">mdi-logout</v-icon>
-      </v-btn>
-     
-      
-    </v-card>
-
-    <v-card class="mx-auto mt-5 pb-15" flat max-width="374">
-      <v-card-text class="mx-0 px-0">
-        <v-row class="mt-2">
-          <v-col cols="12">
-            <WidgetsProgressCustom
-              v-if="progress"
-              :total="progress.total"
-              :engaged="progress.engaged"
-            />
-          </v-col>
-        </v-row>
-        <v-row class="pt-1 ma-0">
-          <v-col cols="6" class="text-center">
-            <v-btn
-              block
-              dark
-              :color="action_type === 'cleaning' ? '#8e44ff' : 'grey'"
-              class="px-3 py-1"
-              @click="setActionType('cleaning')"
-              rounded
-              elevation="2"
-            >
-              <v-icon left>mdi-broom</v-icon>
-              Cleaning
-            </v-btn>
-          </v-col>
-          <v-col cols="6" class="text-center">
-            <v-btn
-              block
-              dark
-              :color="action_type === 'checkout' ? '#8e44ff' : 'grey'"
-              class="px-3 py-1"
-              @click="setActionType('checkout')"
-              rounded
-              elevation="2"
-            >
-              <v-icon left>mdi-clock</v-icon>
-              Check Out
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-row no-gutters class="mt-5">
-          <v-col cols="12">
-            <div v-if="tabId">
-              <WidgetsVacantRoomCard
-                :action_type="action_type"
-                bgColor="#d9534f"
-                color="white"
-                v-if="tabId == 0"
-                :items="rooms.DirtyRooms"
-                :room_type="room_type"
-                room_status="checked_out"
-              />
-              <WidgetsVacantRoomCard
-                :action_type="action_type"
-                bgColor="#ddbc91"
-                color="black"
-                v-if="tabId == 1"
-                :items="rooms.Occupied"
-                :room_type="room_type"
-                room_status="checked_in"
-              />
-              <WidgetsVacantRoomCard
-                :action_type="action_type"
-                bgColor="#f5ece3"
-                color="black"
-                v-if="tabId == 2"
-                :items="rooms.vacantRooms"
-                :room_type="room_type"
-                room_status="available"
-              />
-              <WidgetsVacantRoomCard
-                :action_type="action_type"
-                bgColor="#75a29f"
-                color="white"
-                v-if="tabId == 3"
-                :items="rooms.blockedRooms"
-                :room_type="room_type"
-                room_status="blocked"
-              />
-            </div>
-            <div v-else style="max-height: 550px; overflow: scroll">
-              <WidgetsVacantRoomCard
-                :action_type="action_type"
-                :items="[
-                  ...(rooms.DirtyRooms || []),
-                  ...(rooms.Occupied || []),
-                  ...(rooms.blockedRooms || []),
-                  ...(rooms.vacantRooms || []),
-                ]"
-              />
-            </div>
-          </v-col>
-        </v-row>
-      </v-card-text>
-
-      <v-divider class="mx-4"></v-divider>
-
-      <span class="pt-15">
-        <v-container>
-          <!-- <v-row class="mt-5 mb-1"> -->
-          <!-- <v-col cols="12" class="text-right">
-        <v-icon color="black" @click="room_list">mdi-reload</v-icon>
-      </v-col> -->
-
-          <!-- <v-col v-for="(item, index) in cards" :key="index">
+    <v-container class="pt-10 px-7">
+      <v-row>
+        <v-col>
           <v-card
-            elevation="0"
-            height="70"
-            class="text-center pt-2"
-            :style="`background-color:${item.bgColor}; color:${item.color}; border-radius: 12px`"
+            flat
+            outlined
+            class="mx-auto"
+            width="100%"
+            style="border-radius: 10px"
           >
-            <small class="px-1" style="font-size: 12px">{{ item.label }}</small>
-            <div class="pa-1 mt-1" style="font-size: 14px">
-              {{ item.value }} <span v-if="item.sub_value">/</span>
-              <small v-if="item.sub_value" style="font-size: 11px">{{
-                item.sub_value
-              }}</small>
-            </div>
+            <v-card-text>
+              <WidgetsProgressCustom
+                v-if="$store.state.progress"
+                :total="$store.state.progress.total"
+                :engaged="$store.state.progress.engaged"
+              />
+            </v-card-text>
           </v-card>
-        </v-col> -->
-          <!-- </v-row> -->
-        </v-container>
-      </span>
-    </v-card>
-
-     <v-navigation-drawer
-      v-model="drawer"
+        </v-col>
+        <v-col cols="12">
+          <div v-if="tabId">
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              bgColor="#dc3545"
+              color="white"
+              v-if="tabId == 0"
+              :items="rooms.DirtyRooms"
+              :room_type="room_type"
+              room_status="checked_out"
+            />
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              bgColor="#ffc000"
+              color="black"
+              v-if="tabId == 1"
+              :items="rooms.Occupied"
+              :room_type="room_type"
+              room_status="checked_in"
+            />
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              bgColor="#139c4a"
+              color="black"
+              v-if="tabId == 2"
+              :items="rooms.vacantRooms"
+              :room_type="room_type"
+              room_status="available"
+            />
+            <WidgetsVacantRoomCard
+              bgColor="#ffffffb3"
+              color="white"
+              v-if="tabId == 3"
+              :items="rooms.blockedRooms"
+              :room_type="room_type"
+              room_status="blocked"
+            />
+          </div>
+          <div v-else style="max-height: 650px; overflow: scroll">
+            <WidgetsVacantRoomCard
+              :action_type="action_type"
+              :items="[
+                ...(rooms.DirtyRooms || []),
+                ...(rooms.Occupied || []),
+                ...(rooms.vacantRooms || []),
+                ...(rooms.blockedRooms || []),
+              ]"
+            />
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-footer
+      dense
       app
-      color="white"
-      class="pa-2"
-      style="width: 175px !important"
+      style="
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        box-shadow: rgb(63 63 63 / 20%) 0px -2px 4px;
+      "
+      class="white mb-3"
     >
-      <v-list dense>
-        <!-- Active selection handler -->
-        <v-list-item-group
-          v-model="$store.state.floor_no"
-          active-class="active-item"
-        >
-          <template
-            v-for="(item, i) in [
-              { id: null, number: null, name: `All Floors` },
-              ...loadMenus,
-            ]"
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding: 0 30px;
+        "
+      >
+        <v-btn text rounded class="px-3" @click="setActionType('cleaning')">
+          <v-icon left :color="action_type === 'cleaning' ? '#8e44ff' : 'grey'">
+            mdi-broom
+          </v-icon>
+          <span
+            :style="{
+              color: action_type === 'cleaning' ? '#8e44ff' : 'grey',
+            }"
           >
-            <v-list-item
-              :key="i"
-              :value="item.number"
-              @click="
-                () => {
-                  $store.commit('setFloorNo', item.number);
-                  drawer = false;
-                }
-              "
-            >
-              <v-list-item-action class="mr-2" style="min-width: auto">
-                <v-icon small>mdi-apps</v-icon>
-              </v-list-item-action>
-
-              <v-list-item-content>
-                <v-list-item-title class="menu-title">
-                  {{ item.name }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
+            Cleaning
+          </span>
+        </v-btn>
+        <v-btn text rounded class="px-3" @click="setActionType('checkout')">
+          <v-icon left :color="action_type === 'checkout' ? '#8e44ff' : 'grey'">
+            mdi-clock
+          </v-icon>
+          <span
+            :style="{
+              color: action_type === 'checkout' ? '#8e44ff' : 'grey',
+            }"
+          >
+            Check Out
+          </span>
+        </v-btn>
+      </div>
+    </v-footer>
   </span>
 </template>
 <script>
@@ -310,86 +210,36 @@ export default {
         }
 
         const {
-          bookedRooms,
-          expectCheckOut,
-          checkIn,
+          Occupied,
           blockedRooms,
           dirtyRoomsList,
-          allRooms,
+          vacantRooms,
+          totalRoomsCount,
+          engagedRoomsCount,
         } = data;
 
-        // Helper: Extract room numbers
-        const getRoomNumbers = (list) => list.map((e) => e.room_no);
-
-        const sold = getRoomNumbers(bookedRooms);
-        const expectCO = getRoomNumbers(expectCheckOut);
-        const occupied = getRoomNumbers(checkIn);
-        const blocked = getRoomNumbers(blockedRooms);
-        const dirty = getRoomNumbers(dirtyRoomsList);
-
-        const uniqueRoomNumbers = [
-          ...new Set([...sold, ...expectCO, ...occupied, ...blocked, ...dirty]),
-        ];
-        const vacantRooms = allRooms;
-
-        // Helper: Common room mapping
-        const mapRoomData = (list, extra = {}) =>
-          list.map((e) => ({
-            id: e.id,
-            floor_no: e.floor_no,
-            room_no: e.room_no,
-            room_type: e.room_type.name,
-            is_cleaned: e.is_cleaned.length,
-            is_neutral: e.is_neutral.length,
-            is_dirty: e.is_dirty.length,
-            guest_name: e.booked_room?.customer?.full_name || "---",
-            checkin_datetime_only_display:
-              e.booked_room?.checkin_datetime_only_display,
-            checkout_datetime_only_display:
-              e.booked_room?.checkout_datetime_only_display,
-            ...extra,
-            room_cleaning_status_count: e.room_cleaning_status_count,
-            last_cleaned_at:
-              e.is_cleaned?.[0]?.last_cleaned_at ??
-              e.is_neutral?.[0]?.last_cleaned_at ??
-              e.is_dirty?.[0]?.last_cleaned_at ??
-              "",
-            last_cleaned: e.last_cleaned,
-            booked_room_id: e?.booked_room?.id,
-            booking_id: e?.booked_room?.booking_id,
-          }));
-
         // Room category arrays
-        const vrs = mapRoomData(vacantRooms, {
+        const vrs = this.mapRoomData(vacantRooms, {
           room_status: "available",
-          backgroundColor: "#f5ece3",
-          color: "black",
+          backgroundColor: "#acf5c0",
+          color: "#5ce17f",
         });
-        const drs = mapRoomData(dirtyRoomsList, {
+        const drs = this.mapRoomData(dirtyRoomsList, {
           can_change_status: true,
           room_status: "checked_out",
-          backgroundColor: "#d9534f",
-          color: "white",
+          backgroundColor: "#ffb37e",
+          color: "red",
         });
-        const ors = mapRoomData(checkIn, {
+        const ors = this.mapRoomData(Occupied, {
           room_status: "checked_in",
-          backgroundColor: "#ddbc91",
-          color: "black",
+          backgroundColor: "#ffb37e",
+          color: "#f97316",
         });
-        const brs = mapRoomData(blockedRooms, {
+        const brs = this.mapRoomData(blockedRooms, {
           room_status: "blocked",
-          backgroundColor: "#75a29f",
-          color: "white",
+          backgroundColor: "#fff",
+          color: "#9ca3af",
         });
-
-        // Status totals
-        const [totalDirty, totalOccupied, totalVac, totalBlocked] =
-          await Promise.all([
-            this.getRoomStatus(dirtyRoomsList.map((e) => e.id)),
-            this.getRoomStatus(checkIn.map((e) => e.id)),
-            this.getRoomStatus(vacantRooms.map((e) => e.id)),
-            this.getRoomStatus(blockedRooms.map((e) => e.id)),
-          ]);
 
         // Assign to component state
         this.rooms = {
@@ -399,52 +249,44 @@ export default {
           blockedRooms: brs,
         };
 
-        this.cards = [
-          {
-            color: "white",
-            bgColor: "#d9534f",
-            label: "Dirty",
-            value: drs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
-            sub_value: drs.length,
-          },
-          {
-            color: "black",
-            bgColor: "#ddbc91",
-            label: "Occupied",
-            value: ors.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
-            sub_value: ors.length,
-          },
-          {
-            color: "black",
-            bgColor: "#f5ece3",
-            label: "Vacant",
-            value: vrs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
-            sub_value: vrs.length,
-          },
-          {
-            color: "white",
-            bgColor: "#75a29f",
-            label: "Blocked",
-            value: brs.filter((e) => e.is_cleaned).length > 0 ? 1 : 0,
-            sub_value: brs.length,
-          },
-        ];
-
         this.progress = {
-          total: allRooms.length + blocked.length,
-          engaged: this.$utils.getSum(this.cards.map((e) => e.value)),
+          total: totalRoomsCount,
+          engaged: engagedRoomsCount,
         };
+
+        this.$store.commit("setProgress", this.progress);
       } catch (error) {
         console.error(error);
-        this.alert(
-          "Error!",
-          "Something went wrong while fetching rooms.",
-          "error"
-        );
       }
     },
     getSubValue(length, total) {
       return length - total < 0 ? "0" : (length - total).toString();
+    },
+    mapRoomData(list, extra = {}) {
+      return list.map((e) => ({
+        id: e.id,
+        floor_no: e.floor_no,
+        room_no: e.room_no,
+        room_type: e.room_type.name,
+        is_cleaned: e?.is_cleaned || [],
+        is_neutral: e?.is_neutral || [],
+        is_dirty: e?.is_dirty || [],
+        guest_name: e.booked_room?.customer?.full_name || "---",
+        checkin_datetime_only_display:
+          e.booked_room?.checkin_datetime_only_display,
+        checkout_datetime_only_display:
+          e.booked_room?.checkout_datetime_only_display,
+        ...extra,
+        room_cleaning_status_count: e.room_cleaning_status_count,
+        last_cleaned_at:
+          e.is_cleaned?.[0]?.last_cleaned_at ??
+          e.is_neutral?.[0]?.last_cleaned_at ??
+          e.is_dirty?.[0]?.last_cleaned_at ??
+          "",
+        last_cleaned: e.last_cleaned,
+        booked_room_id: e?.booked_room?.id,
+        booking_id: e?.booked_room?.booking_id,
+      }));
     },
     async getRoomStatus(room_ids) {
       let config = {

@@ -2,19 +2,32 @@
   <v-app>
     <style>
       body {
+        overflow: hidden;
         font-size: 11px !important;
       }
 
       .text-color {
         color: #8a8a8a;
       }
-      .border-top {
-        border-top: 1px solid #e0e0e0;
-      }
-      .border-bottom {
-        border-bottom: 1px solid #e0e0e0;
+      .main-bg {
+        background-color: #f5f5f5; /* or #fafafa for even lighter */
+        min-height: 100vh;
       }
     </style>
+    <v-app-bar app color="primary" dark>
+      <!-- Left menu button -->
+      <v-btn icon v-if="!drawer" @click="drawer = true">
+        <v-icon>mdi-menu</v-icon>
+      </v-btn>
+
+      <v-spacer></v-spacer>
+
+      <!-- Right logout button -->
+      <v-btn icon @click="logout">
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
+    </v-app-bar>
+
     <v-navigation-drawer
       v-model="drawer"
       app
@@ -25,6 +38,30 @@
       <v-list dense>
         <!-- Active selection handler -->
         <v-list-item-group
+          active-class="active-item"
+        >
+          <template
+          >
+            <v-list-item
+              @click="
+                () => {
+                  $router.push('/');
+                }
+              "
+            >
+              <v-list-item-action class="mr-2" style="min-width: auto">
+                <v-icon small>mdi-home</v-icon>
+              </v-list-item-action>
+
+              <v-list-item-content>
+                <v-list-item-title class="menu-title">
+                  Home
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-list-item-group>
+         <v-list-item-group
           v-model="$store.state.floor_no"
           active-class="active-item"
         >
@@ -87,7 +124,7 @@
       </v-row>
     </v-app-bar> -->
     <v-main>
-     <nuxt />
+      <nuxt />
     </v-main>
   </v-app>
 </template>

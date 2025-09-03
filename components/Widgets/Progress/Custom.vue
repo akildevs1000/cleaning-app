@@ -1,17 +1,31 @@
 <template>
-  <v-container>
-    <v-slider
-      readonly
-      v-model="engagedValue"
-      :max="total"
-      :step="1"
-      track-color="#d8bfff"
+  <!-- <v-progress-linear
+      :value="15"
       color="primary"
-      thumb-color="primary"
-      thumb-label="always"
-      hide-details
-    ></v-slider>
-  </v-container>
+      height="10"
+      rounded
+    >
+    </v-progress-linear> -->
+  <span>
+    <div class="mx-3">
+      <div style="display: flex; justify-content: space-between;">
+        <div>Cleaning Progress</div>
+        <div>{{ engaged }} / {{ total }}</div>
+      </div>
+    </div>
+    <div>
+      <v-slider
+        readonly
+        v-model="engagedValue"
+        :max="total"
+        :step="1"
+        track-color="#d8bfff"
+        color="primary"
+        thumb-color="primary"
+        hide-details
+      ></v-slider>
+    </div>
+  </span>
 </template>
 
 <script>
@@ -22,7 +36,7 @@ export default {
   },
   data() {
     return {
-      engagedValue: this.engaged,
+      engagedValue: 15,
     };
   },
   watch: {
