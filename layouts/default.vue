@@ -9,8 +9,10 @@
       .text-color {
         color: #8a8a8a;
       }
+
       .main-bg {
-        background-color: #f5f5f5; /* or #fafafa for even lighter */
+        background-color: #f5f5f5;
+        /* or #fafafa for even lighter */
         min-height: 100vh;
       }
     </style>
@@ -28,27 +30,16 @@
       </v-btn>
     </v-app-bar>
 
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-      color="white"
-      class="pa-2"
-      style="width: 175px !important"
-    >
+    <v-navigation-drawer v-model="drawer" app color="white" class="pa-2" style="width: 175px !important">
       <v-list dense>
         <!-- Active selection handler -->
-        <v-list-item-group
-          active-class="active-item"
-        >
-          <template
-          >
-            <v-list-item
-              @click="
-                () => {
-                  $router.push('/');
-                }
-              "
-            >
+        <v-list-item-group active-class="active-item">
+          <template>
+            <v-list-item @click="
+              () => {
+                $router.push('/');
+              }
+            ">
               <v-list-item-action class="mr-2" style="min-width: auto">
                 <v-icon small>mdi-home</v-icon>
               </v-list-item-action>
@@ -61,26 +52,12 @@
             </v-list-item>
           </template>
         </v-list-item-group>
-         <v-list-item-group
-          v-model="$store.state.floor_no"
-          active-class="active-item"
-        >
-          <template
-            v-for="(item, i) in [
-              { id: null, number: null, name: `All Floors` },
-              ...loadMenus,
-            ]"
-          >
-            <v-list-item
-              :key="i"
-              :value="item.number"
-              @click="
-                () => {
-                  $store.commit('setFloorNo', item.number);
-                  drawer = false;
-                }
-              "
-            >
+        <v-list-item-group v-model="selectedFloor" active-class="active-item">
+          <template v-for="(item, i) in [
+            { id: null, number: null, name: `All Floors` },
+            ...loadMenus,
+          ]">
+            <v-list-item :key="i" :value="item.number" @click="drawer = false">
               <v-list-item-action class="mr-2" style="min-width: auto">
                 <v-icon small>mdi-apps</v-icon>
               </v-list-item-action>
@@ -219,6 +196,14 @@ export default {
   },
 
   computed: {
+    selectedFloor: {
+      get() {
+        return this.$store.state.floor_no
+      },
+      set(value) {
+        this.$store.commit('setFloorNo', value)
+      }
+    },
     changeColor() {
       return this.$store.state.color;
     },
@@ -329,7 +314,7 @@ export default {
           }
 
           this.pendingNotificationsCount = pendingcount;
-        } catch (Exp) {}
+        } catch (Exp) { }
       });
     },
     updateMouseLocation(event) {
