@@ -36,7 +36,7 @@ export default {
   },
   data() {
     return {
-      engagedValue: 15,
+      engagedValue: this.engaged,
     };
   },
   watch: {
