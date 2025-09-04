@@ -2,7 +2,7 @@
   <span>
     <v-container class="pt-10 px-7">
       <v-row>
-        <v-col>
+        <v-col v-if="$store.state.progress">
           <v-card
             flat
             outlined
@@ -12,7 +12,6 @@
           >
             <v-card-text>
               <WidgetsProgressCustom
-                v-if="$store.state.progress"
                 :total="$store.state.progress.total"
                 :engaged="$store.state.progress.engaged"
               />
