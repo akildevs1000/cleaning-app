@@ -77,7 +77,7 @@
       style="
         left: 0px;
         right: 0px;
-        bottom: 0px;
+        bottom: 50px;
         box-shadow: rgb(63 63 63 / 20%) 0px -2px 4px;
       "
       class="white mb-3"
