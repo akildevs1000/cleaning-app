@@ -57,7 +57,7 @@
               room_status="blocked"
             />
           </div>
-          <div v-else style="max-height: 650px; overflow: scroll">
+          <div v-else style="max-height: 550px; overflow: scroll">
             <WidgetsVacantRoomCard
               :action_type="action_type"
               :items="[
