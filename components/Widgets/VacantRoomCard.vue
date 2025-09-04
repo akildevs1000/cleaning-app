@@ -38,7 +38,7 @@
             <div>
               <v-progress-circular v-if="getRelatedStatus(item) == 'In Progress'" indeterminate :color="item.color"
                 size="20" :width="3"></v-progress-circular>
-              <v-icon v-else class="mb-1" :color="item.color">
+              <v-icon v-else class="mb-1" :color="item.color" size="35">
                 {{ getRelatedIcon(item) }}
               </v-icon>
             </div>
