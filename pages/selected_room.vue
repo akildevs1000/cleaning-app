@@ -372,7 +372,8 @@
                 @click="stop"
               >
                 <v-icon left>mdi-stop-circle-outline</v-icon>
-                Stop {{ selectedRoom?.action_type }}
+                <!-- Stop {{ selectedRoom?.action_type }} -->
+                 Finish
               </v-btn>
 
               <!-- <v-btn
